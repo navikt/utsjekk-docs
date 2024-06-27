@@ -2,7 +2,7 @@ name: GitHub Pages bygg og deploy
 
 on:
   push:
-    branches: [docs]
+    branches: [main]
 
 jobs:
   build:
