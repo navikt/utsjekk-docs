@@ -1,0 +1,45 @@
+@import "@navikt/ds-css";
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  background: var(--a-bg-default);
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+#root, #__next {
+  isolation: isolate;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light) {
+    --a-text-default: var(--a-text-on-inverted);
+    --a-text-subtle: var(--a-gray-400);
+    --a-bg-default: #111;
+    --a-bg-subtle: #222;
+    --a-text-action: var(--a-blue-300);
+    --a-border-default: var(--a-gray-700);
+    --a-border-subtle: var(--a-gray-800);
+    --a-surface-neutral-subtle-hover: var(--a-bg-subtle);
+  }
+}
