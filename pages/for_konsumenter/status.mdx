@@ -16,11 +16,16 @@ Status på utbetalinger er en av følgende verdier:
 
 ## Med REST
 
-### GET /\{behandlingId\}/status
+```kotlin
+GET /{sakId}/{behandlingId}/status
+```
+```kotlin
+GET /{sakId}/{behandlingId}/{iverksettingId}/status
+```
 
 Henter status på utbetaling. Dette endepunktet kan brukes for å sjekke tilstanden til en utbetaling som er tatt i mot og
 validert av utsjekk. NAVs økonomisystem har en asynkron integrasjon og er i tillegg et stormaskinsystem som har definerte
-oppetider. Økonomisystemet er vanligvis stengt i helger, helligdager og mellom kl 21 og kl 6 på virkedager. Derfor kan det
+oppetider. Økonomisystemet er stengt i helger, helligdager og mellom kl 21 og kl 6 på virkedager. Derfor kan det
 ta lang tid før en utbetaling blir kvittert ut fra økonomisystemet avhengig av når den er sendt inn.
 
 Dersom utsjekk finner behandlingen, vil endepunktet svare med `200 OK` og utbetalingsstatus.
