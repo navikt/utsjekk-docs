@@ -14,16 +14,18 @@ endrer seg eller brukeren har dager i perioden uten utbetaling (eksempelvis helg
     Bruker skal ha utbetaling mandag-fredag med 500kr/dag tom onsdag og 400kr/dag fom torsdag. Det representeres med følgende utbetalingsperioder:
     ```json5
     [
-    {
-        "beløpPerDag": 500,
-        "fraOgMed": "2023-11-13",
-        "tilOgMed": "2023-11-15"
-    },
-    {
-        "beløpPerDag": 400,
-        "fraOgMed": "2023-11-16",
-        "tilOgMed": "2023-11-17"
-    }
+      {
+          "beløp": 500,
+          "satstype": "DAGLIG",
+          "fraOgMed": "2023-11-13",
+          "tilOgMed": "2023-11-15"
+      },
+      {
+          "beløp": 400,
+          "satstype": "DAGLIG",
+          "fraOgMed": "2023-11-16",
+          "tilOgMed": "2023-11-17"
+      }
     ]
     ```
 </details>
@@ -33,16 +35,18 @@ endrer seg eller brukeren har dager i perioden uten utbetaling (eksempelvis helg
     Bruker skal ha 500kr/dag for 14 dager, med unntak av helger. Det representeres med følgende utbetalingsperioder:
     ```json
     [
-    {
-        "beløpPerDag": 500,
-        "fraOgMed": "2023-11-13",
-        "tilOgMed": "2023-11-17"
-    },
-    {
-        "beløpPerDag": 500,
-        "fraOgMed": "2023-11-20",
-        "tilOgMed": "2023-11-24"
-    }
+      {
+          "beløp": 500,
+          "satstype": "DAGLIG",
+          "fraOgMed": "2023-11-13",
+          "tilOgMed": "2023-11-17"
+      },
+      {
+          "beløp": 500,
+          "satstype": "DAGLIG",
+          "fraOgMed": "2023-11-20",
+          "tilOgMed": "2023-11-24"
+      }
     ]
     ```
 </details>

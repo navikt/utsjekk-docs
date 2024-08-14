@@ -22,14 +22,11 @@ Følgende må være oppfylt for at Utsjekk skal akseptere utbetalingen:
 * Utbetalingsperiodene må ikke overlappe i tid innenfor samme stønadsundergruppe.
 * Utbetalingsperiodene må være gyldige perioder, dvs. at fom-dato på en periode må være før tom-dato.
 * Alle beløp må være positive heltall. Dvs. alle beløp må være hele kroner, og tjenesten aksepterer ikke 0-utbetalinger eller negative utbetalinger
-* Alle beløp må være under maksgrensen på 5000 kr/dag*
 
 **Tilstand**
-* Utsjekk kan ikke allerede ha en utbetaling med samme behandlingsid*
+* Utsjekk kan ikke allerede ha en utbetaling med samme behandlingsid og iverksettingsid
 * Evt. tidligere utbetaling må tilhøre samme sak
 * Evt. tidligere utbetaling på saken må være ferdig iverksatt
-
-\* Gjelder ikke tilleggsstønader
 
 Videre er det noen ytelsesspesifikke valideringer. Ta kontakt med oss dersom din ytelse har spesielle behov.
 
@@ -38,7 +35,8 @@ Videre er det noen ytelsesspesifikke valideringer. Ta kontakt med oss dersom din
 Listen av utbetalinger som Utsjekk tar i mot følger dette formatet:
 ```json5
 {
-    "beløpPerDag": "int",
+    "beløp": "uint",
+    "satstype": "enum",
     "fraOgMed": "date",
     "tilOgMed": "date",
     "stønadsdata": {
@@ -47,8 +45,8 @@ Listen av utbetalinger som Utsjekk tar i mot følger dette formatet:
     }
 }
 ```
-Utbetalingene må altså periodiseres og klienten må fastsette et beløp per dag for perioden. Dersom beløpet eller stønadstypen
-endrer seg eller brukeren har dager i perioden uten utbetaling (eksempelvis helg), må det opprettes ny periode.
+Utbetalingene må altså periodiseres og klienten må fastsette et beløp og satstype perioden. Dersom beløpet eller stønadstypen
+endrer seg må det opprettes ny periode. For utbetalinger med dagsats må det opprettes nye perioder dersom brukeren har dager i perioden uten utbetaling, som f.eks. helg.
 
 **Eksempler**
 <details>
@@ -57,12 +55,14 @@ Bruker skal ha utbetaling mandag-fredag med 500kr/dag tom onsdag og 400kr/dag fo
 ```json5
 [
   {
-    "beløpPerDag": 500,
+    "beløp": 500,
+    "satstype": "DAGLIG",
     "fraOgMed": "2023-11-13",
     "tilOgMed": "2023-11-15"
   },
   {
-    "beløpPerDag": 400,
+    "beløp": 400,
+    "satstype": "DAGLIG",
     "fraOgMed": "2023-11-16",
     "tilOgMed": "2023-11-17"
   }
@@ -76,12 +76,14 @@ Bruker skal ha 500kr/dag for 14 dager, med unntak av helger. Det representeres m
 ```json
 [
   {
-    "beløpPerDag": 500,
+    "beløp": 500,
+    "satstype": "DAGLIG",
     "fraOgMed": "2023-11-13",
     "tilOgMed": "2023-11-17"
   },
   {
-    "beløpPerDag": 500,
+    "beløp": 500,
+    "satstype": "DAGLIG",
     "fraOgMed": "2023-11-20",
     "tilOgMed": "2023-11-24"
   }
@@ -134,7 +136,8 @@ er det bedre å sende dette som én periode:
 ```json
 [
   {
-    "beløpPerDag": 500,
+    "beløp": 500,
+    "satstype": "DAGLIG",
     "fraOgMed": "2024-02-12",
     "tilOgMed": "2024-02-16",
     "stønadsdata": {
@@ -148,7 +151,8 @@ Heller enn å sende 5 identiske perioder:
 ```json
 [
   {
-    "beløpPerDag": 500,
+    "beløp": 500,
+    "satstype":"DAGLIG",
     "fraOgMed": "2024-02-12",
     "tilOgMed": "2024-02-12",
     "stønadsdata": {
@@ -156,7 +160,8 @@ Heller enn å sende 5 identiske perioder:
     }
   },
   {
-    "beløpPerDag": 500,
+    "beløp": 500,
+    "satstype": "DAGLIG",
     "fraOgMed": "2024-02-13",
     "tilOgMed": "2024-02-13",
     "stønadsdata": {
@@ -164,7 +169,8 @@ Heller enn å sende 5 identiske perioder:
     }
   },
   {
-    "beløpPerDag": 500,
+    "beløp": 500,
+    "satstype": "DAGLIG",
     "fraOgMed": "2024-02-14",
     "tilOgMed": "2024-02-14",
     "stønadsdata": {
@@ -172,7 +178,8 @@ Heller enn å sende 5 identiske perioder:
     }
   },
   {
-    "beløpPerDag": 500,
+    "beløp": 500,
+    "satstype": "DAGLIG",
     "fraOgMed": "2024-02-15",
     "tilOgMed": "2024-02-15",
     "stønadsdata": {
@@ -180,7 +187,8 @@ Heller enn å sende 5 identiske perioder:
     }
   },
   {
-    "beløpPerDag": 500,
+    "beløp": 500,
+    "satstype": "DAGLIG",
     "fraOgMed": "2024-02-16",
     "tilOgMed": "2024-02-16",
     "stønadsdata": {
@@ -196,7 +204,8 @@ Dersom man i behandling #1 iverksetter følgende utbetalingsperiode:
 ```json
 [
   {
-    "beløpPerDag": 500,
+    "beløp": 500,
+    "satstype": "DAGLIG",
     "fraOgMed": "2024-02-12",
     "tilOgMed": "2024-02-16",
     "stønadsdata": {
@@ -210,7 +219,8 @@ Og man i behandling #2 vil iverksette flere dager med utbetaling, må dette dele
 ```json
 [
   {
-    "beløpPerDag": 500,
+    "beløp": 500,
+    "satstype": "DAGLIG",
     "fraOgMed": "2024-02-12",
     "tilOgMed": "2024-02-16",
     "stønadsdata": {
@@ -218,7 +228,8 @@ Og man i behandling #2 vil iverksette flere dager med utbetaling, må dette dele
     }
   },
   {
-    "beløpPerDag": 500,
+    "beløp": 500,
+    "satstype": "DAGLIG",
     "fraOgMed": "2024-02-17",
     "tilOgMed": "2024-02-23",
     "stønadsdata": {
