@@ -4,8 +4,8 @@ import withNextra from "nextra"
 const nextConfig = {
   output: "export",
   assetPrefix:
-    process.env.NODE_ENV === "production" ? "/utsjekk" : undefined,
-  basePath: process.env.NODE_ENV === "production" ? "/utsjekk" : undefined,
+    process.env.NODE_ENV === "production" ? "/utsjekk-docs" : undefined,
+  basePath: process.env.NODE_ENV === "production" ? "/utsjekk-docs" : undefined,
   images: {
     unoptimized: true,
   },
