@@ -55,3 +55,36 @@ endrer seg eller brukeren har dager i perioden uten utbetaling (eksempelvis helg
 Utsjekk _må_ ha beløp per dag for meldepliktsytelser uavhengig av hvordan vedtaksløsningen representerer utbetalingene
 internt. Dette kommer av føringer fra NAVs økonomisystem. Dersom din vedtaksløsning feks. representerer utbetalingen som et
 totalbeløp for en 14-dagers periode, må dere på konsumentsiden fordele dette totalbeløpet på dagsbeløp slik dere ser det hensiktsmessig.
+
+## Ansvarsfordeling
+
+### Hva har konsumentene selv ansvar for
+
+
+#### Totrinnskontroll
+Utsjekk gjør ingen validering på feltene for **saksbehandlerId** og **beslutterId**. Konsumentene har selv ansvaret for å vurdere om det skal gjennomføres totrinnskontroll og at den gjøres korrekt. Disse feltene skal fylles ut på grunn av sporing i økonomisystemet. Utsjekk sender bare disse dataene videre.
+
+Les mer om [totrinnskontroll i etterlevelsesløsningen](https://etterlevelse.ansatt.nav.no/krav/119/1).
+
+#### Dataene som sendes til Utsjekk er korrekt
+Konsumentene har ansvar for at dataene som sendes inn til utsjekk er korrekt og i henhold til ytelsens regelverk.
+
+Utsjekk vet for eksempel ikke noe om, og gjør ingen validering på, størrelse på beløp. Eksempel: Dagpenger har selv ansvar for at beløp som sendes inn til Utsjekk ikke er større enn tillatt maksbeløp, i henhold til dagpengeregelverket. 
+
+Dersom vedtaksløsningen har iverksatt noe som er feil og som må korrigeres, så er det vedtaksløsningen selv som må rette opp i det og iverksette på nytt.
+
+### Hva tar utsjekk ansvar for
+
+Utsjekk tar ansvar for at en iverksetting, som gir en 202-respons, faktisk sendes videre til økonomisystemet og blir iverksatt. Utsjekk håndterer også kvitteringer og følger opp mot PO utbetaling dersom kvittering uteblir.
+
+Konsumenter kan sende iverksettinger til Utsjekk når som helst og helt uavhengig av økonomisystemets åpningstider. Dette er også beskrevet under [status på utbetaling](/for_konsumenter/status#med-rest).
+
+Se [siden om iverksetting](/for_konsumenter/utbetaling/iverksetting) for hvilke valideringer Utsjekk gjør.
+
+Utsjekk tar også ansvar for [grensesnittavstemming](/for_konsumenter/avstemming) mot økonomisystemet.
+
+
+## ROS og etterlevelse for Utsjekk
+
+* [ROS for utsjekk](https://apps.powerapps.com/play/f8517640-ea01-46e2-9c09-be6b05013566?app=567&ID=1674)
+* [Etterlevelsesdokument for Utsjekk](https://etterlevelse.ansatt.nav.no/dokumentasjon/85240a1e-2b08-4298-b7a3-bbb520472dac)
