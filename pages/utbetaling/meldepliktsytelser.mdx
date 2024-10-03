@@ -2,4 +2,29 @@
 title: Meldepliktsytelser
 ---
 
+import meldekortid from "../../public/meldekort_id.png"
+
 # Meldepliktsytelser
+Utsjekk kan p.t. håndtere utbetalinger for meldepliktsytelsene dagpenger og tiltakspenger.
+
+## MeldekortId
+Meldepliktsytelsene må sende `meldekortId` på alle utbetalingsperiodene både i iverksetting og simulering. MeldekortId er id-en på meldekortet som
+utbetalingen tilhører. Hvis saksbehandlingsløsningen korrigerer et meldekort, må korrigeringen ha samme meldekortId som den opprinnelige utbetalingen på meldekortet.
+Denne id-en er altså _ikke_ id-en på selve hendelsen som trigget utbetalingen, men det faktiske meldekortet som utbetalingen tilhører. Dette er illustrert i figuren under.
+
+<a href={meldekortid.src} target="_blank">
+  ![MeldekortId for tre meldekort og en korrigering](/meldekort_id.png)
+</a>
+
+Eksempelet over viser utbetalingsperioder for tre meldekort og én korrigering. Merk at id-en på det første meldekortet ikke endrer seg ved korrigering (vedtak 3).
+
+### Format og begrensninger
+Det er opp til konsumenten å velge format på meldekortId-en, og hvorvidt skal følge et meningsbærende format eller ikke. Eksempelvis kan et passende format på meldekortId være
+`<år>_<uke>/<år>_<uke>` (gitt at meldekortet følger hele uker), eller `<fom-dato>/<tom-dato>`. Det er også helt lov å bruke et format som ikke er meningsbærende, feks. UUID eller ULID.
+MeldekortId-en må være unik innenfor samme sak – det vil si at hvis Utsjekk mottar en utbetaling på en meldekortId som er sendt tidligere på samme sak, vil den tolke utbetalingsperioden
+som en korrigering på de opprinnelige utbetalingsperiodene som tilhører samme meldekortId. Det er ellers ingen begrensning eller validering på meldekortId.
+
+MeldekortId-en sendes ikke videre til Økonomisystemet og kan dermed ikke brukes av DVH for å koble sammen data på tvers.
+
+## Utbetalinger som ikke trigges av meldekort
+Har ytelsen din behov for å utføre utbetalinger som ikke kan kobles til et konkret meldekort? Ta kontakt med oss, så finner vi en løsning sammen.
