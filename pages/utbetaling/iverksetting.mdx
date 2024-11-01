@@ -12,7 +12,7 @@ import totalbilde2 from "../../public/totalbilde_utbetalinger2.png"
 Sender en utbetaling til NAVs økonomisystem. Når API-et mottar en utbetaling som skal iverksettes, gjør den noen enkle valideringer
 og svarer med en `202 Accepted` dersom valideringene går gjennom. Resten av løypa for å utbetale er helt asynkron og orkestreres
 internt i Utsjekk. En ok-respons fra API-et betyr altså _ikke_ at utbetalingen er kvittert ok i økonomisystemet, men at
-Utsjekk tar ansvaret for videre håndtering. Bruk [status-endepunktet](/for_konsumenter/status) for å sjekke status på utbetalingen.
+Utsjekk tar ansvaret for videre håndtering. Bruk [status-endepunktet](/status) for å sjekke status på utbetalingen.
 
 
 ### Validering
