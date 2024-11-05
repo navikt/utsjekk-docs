@@ -16,19 +16,28 @@ Utsjekk tar ansvaret for videre håndtering. Bruk [status-endepunktet](/status) 
 
 
 ### Validering
-Følgende må være oppfylt for at Utsjekk skal akseptere utbetalingen:
 
-**Format på utbetaling**
-* Utbetalingsperiodene må ikke overlappe i tid innenfor samme stønadsundergruppe.
-* Utbetalingsperiodene må være gyldige perioder, dvs. at fom-dato på en periode må være før tom-dato.
-* Tjenesten aksepterer ikke negative utbetalinger
+Tabellene under viser hva som må være oppfylt for at Utsjekk skal akseptere utbetalingen.
 
-**Tilstand**
-* Utsjekk kan ikke allerede ha en utbetaling med samme behandlingsid og iverksettingsid
-* Evt. tidligere utbetaling må tilhøre samme sak
-* Evt. tidligere utbetaling på saken må være ferdig iverksatt
+#### Format på utbetalingen
 
-Videre er det noen ytelsesspesifikke valideringer. Ta kontakt med oss dersom din ytelse har spesielle behov.
+| Valideringsregel                                                                                                  | Feilkode hvis ikke oppfylt |
+|:------------------------------------------------------------------------------------------------------------------|:---------------------------|
+| Utbetalingsperiodene må ikke overlappe i tid innenfor samme stønadsundergruppe                                    | 400                        |
+| Utbetalingsperiodene må være gyldige perioder, dvs. at fom-dato på en periode må være før tom-dato                | 400                        |
+| Utbetalingsperiodene må samsvare med satstypen. Eksempelvis må periodene på satstype MÅNEDLIG følge hele måneder  | 400                        |
+| Beløp må være ikke-negative                                                                                       | 400                        |
+| Sak-ID må være under 25 tegn                                                                                      | 400                        |
+| Behandling-ID må være under 30 tegn                                                                               | 400                        |
+| Iverksetting-ID må settes konsekvent for hele saken. Dvs. den må enten brukes for alle iverksettinger eller ingen | 400                        |
+
+#### Tilstand på saken i Utsjekk
+| Valideringsregel                                                                                     | Feilkode hvis ikke oppfylt |
+|:-----------------------------------------------------------------------------------------------------|:---------------------------|
+| Utsjekk kan ikke allerede ha mottatt en utbetaling med samme behandlingsid og iverksettingsid        | 409                        |
+| Evt. tidligere utbetaling må tilhøre samme sak                                                       | 400                        |
+| Evt. tidligere utbetaling på saken må være ferdig iverksatt                                          | 409                        |
+| Evt. tidligere utbetaling på saken må være identisk med den siste iverksettingen Utsjekk har mottatt | 400                        |
 
 ### Utbetalinger
 
