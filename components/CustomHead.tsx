@@ -1,7 +1,8 @@
 import { useConfig } from "nextra-theme-docs"
 import { useRouter } from "next/router"
+import type { FrontMatter } from "nextra";
 
-const getTitle = (frontMatter: { title: string }) =>
+const getTitle = (frontMatter: FrontMatter) =>
   `${frontMatter.title} - utsjekk`
 
 export const CustomHead = () => {

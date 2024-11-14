@@ -16,13 +16,13 @@ const config: DocsThemeConfig = {
   head: CustomHead,
   docsRepositoryBase: "https://github.com/navikt/utsjekk",
   footer: {
-    text: "© 2023 NAV IT",
+    content: "© 2023 NAV IT",
   },
   feedback: {
     content: <ExternalLabel>Gi oss tilbakemelding</ExternalLabel>,
   },
   editLink: {
-    text: <Detail>Rediger denne siden</Detail>,
+    content: <Detail>Rediger denne siden</Detail>,
     component: ({ className, children, filePath }) => (
       <Link
         className={className}

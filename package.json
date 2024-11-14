@@ -1,5 +1,5 @@
 {
-  "name": "utsjekk-gh-pages",
+  "name": "utsjekk-docs",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -11,29 +11,29 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@mdx-js/react": "^3.0.0",
-    "@navikt/ds-css": "^5.9.1",
-    "@navikt/ds-react": "^5.9.1",
-    "clsx": "^2.0.0",
-    "next": "14.2.12",
-    "nextra": "^2.13.2",
-    "nextra-theme-docs": "^2.13.2",
+    "@mdx-js/react": "^3.1.0",
+    "@navikt/ds-css": "^7.5.1",
+    "@navikt/ds-react": "^7.5.1",
+    "clsx": "^2.1.1",
+    "next": "^15.0.3",
+    "nextra": "^3.2.3",
+    "nextra-theme-docs": "^3.2.3",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^22.9.0",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "14.0.1",
-    "eslint-config-prettier": "^9.0.0",
-    "husky": "^8.0.0",
-    "lint-staged": "^15.0.2",
-    "prettier": "^3.0.3",
-    "typescript": "^5"
+    "eslint": "^9.14.0",
+    "eslint-config-next": "^15.0.3",
+    "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
   },
   "engines": {
-    "node": "^18.17 || ^19 || ^21"
+    "node": "^22"
   }
 }
