@@ -1,14 +1,14 @@
 import { OpenAPIV3_1 } from "openapi-types"
 import { Heading } from "@navikt/ds-react"
 
-import { isRequestBodyObject } from "@/lib/openapi/guards"
-import { SchemaTypeView } from "@/components/openapi/SchemaTypeView"
+import { isReferenceObject } from "@/lib/openapi/guards"
 import { Required } from "@/components/openapi/Required"
 
+import styles from "./RequestBodyView.module.css"
+import { resolveRef } from "@/lib/openapi/util"
+import { ObjectView } from "@/components/openapi/ObjectView"
 import ReferenceObject = OpenAPIV3_1.ReferenceObject
 import RequestBodyObject = OpenAPIV3_1.RequestBodyObject
-
-import styles from "./RequestBodyView.module.css"
 
 type Props = {
   requestBody: ReferenceObject | RequestBodyObject
@@ -16,35 +16,41 @@ type Props = {
 }
 
 export const RequestBodyView: React.FC<Props> = ({ requestBody, doc }) => {
-  if (!isRequestBodyObject(requestBody)) {
-    return null // TODO: Support ref-objects
-  }
-
-  console.log(requestBody)
+  const body = isReferenceObject(requestBody)
+    ? (() => {
+        const body = resolveRef(requestBody.$ref, doc)
+        return { content: body, ...body }
+      })()
+    : requestBody
 
   return (
     <>
-      {Object.entries(requestBody.content).map(
-        ([mediaType, mediaTypeObject]) => {
-          const schema = mediaTypeObject.schema
-          return (
-            <div className={styles.requestBody} key={mediaType}>
-              <div className={styles.heading}>
-                <div>
-                  <Heading level="3" size="small">
-                    Request body:
-                  </Heading>
-                  <pre>{mediaType}</pre>
-                </div>
-                {requestBody.required && <Required />}
-              </div>
+      {Object.entries(body.content).map(([mediaType, mediaTypeObject]) => {
+        const schema = isReferenceObject(mediaTypeObject.schema)
+          ? resolveRef(mediaTypeObject.schema.$ref, doc)
+          : mediaTypeObject.schema
+
+        return (
+          <div className={styles.requestBody} key={mediaType}>
+            <div className={styles.heading}>
               <div>
-                {schema && <SchemaTypeView schema={schema} doc={doc} />}
+                <Heading level="3" size="small">
+                  Request body:
+                </Heading>
+                <pre>{mediaType}</pre>
               </div>
+              {body.required && <Required />}
             </div>
-          )
-        },
-      )}
+            {schema && (
+              <ObjectView
+                required={schema.required}
+                properties={schema.properties}
+                doc={doc}
+              />
+            )}
+          </div>
+        )
+      })}
     </>
   )
 }

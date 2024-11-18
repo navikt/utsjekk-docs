@@ -110,6 +110,8 @@ const ObjectSchemaObjectSchema = z.object({
   dependentRequired: z.record(z.string(), z.array(z.string())).optional(),
   enum: z.array(z.any()).nonempty().optional(),
   const: z.any().optional(),
+  oneOf: z.array(z.any()).optional(),
+  allOf: z.array(z.any()).optional(),
 })
 
 const SchemaObjectSchema = z.discriminatedUnion("type", [

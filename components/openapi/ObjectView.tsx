@@ -7,27 +7,55 @@ import { PropertyView } from "@/components/openapi/PropertyView"
 import { StringPropertyView } from "@/components/openapi/StringPropertyView"
 import { IntegerPropertyView } from "@/components/openapi/IntegerPropertyView"
 import { ObjectPropertyView } from "@/components/openapi/ObjectPropertyView"
+import { ArrayPropertyView } from "@/components/openapi/ArrayPropertyView"
+import { OneOfPropertyView } from "@/components/openapi/OneOfPropertyView"
 
+import styles from "./ObjectView.module.css"
 import NonArraySchemaObject = OpenAPIV3.NonArraySchemaObject
 import SchemaObject = OpenAPIV3_1.SchemaObject
 import ReferenceObject = OpenAPIV3_1.ReferenceObject
+import ArraySchemaObject = OpenAPIV3_1.ArraySchemaObject
 
-import styles from "./ObjectView.module.css"
+const composeAllOf = (
+  properties: Record<string, SchemaObject | ReferenceObject>,
+  allOf: SchemaObject[],
+): Record<string, SchemaObject | ReferenceObject> =>
+  allOf.reduce(
+    (object, current) => ({
+      ...object,
+      ...current.properties,
+    }),
+    properties,
+  )
 
 type Props = {
   required?: string[]
   properties?: Record<string, SchemaObject | ReferenceObject>
   doc: OpenApiDoc
+  allOf?: SchemaObject[]
 }
 
-export const ObjectView: React.FC<Props> = ({ required, properties, doc }) => {
+export const ObjectView: React.FC<Props> = ({
+  required,
+  properties,
+  doc,
+  allOf,
+}) => {
   if (!properties) {
     return null
   }
 
+  console.log(allOf)
+
+  const composedProperties = allOf
+    ? composeAllOf(properties ?? {}, allOf ?? [])
+    : properties
+
+  console.log(composedProperties)
+
   return (
     <ul className={styles.objectView}>
-      {Object.entries(properties).map(([name, value]) => {
+      {Object.entries(composedProperties).map(([name, value]) => {
         const schema = isReferenceObject(value)
           ? resolveRef(value.$ref, doc)
           : value
@@ -61,6 +89,28 @@ export const ObjectView: React.FC<Props> = ({ required, properties, doc }) => {
                 doc={doc}
               />
             )
+          case "array":
+            return (
+              <ArrayPropertyView
+                key={name}
+                name={name}
+                schema={schema as ArraySchemaObject}
+                required={required?.includes(name)}
+                doc={doc}
+              />
+            )
+        }
+
+        if (schema.oneOf) {
+          return (
+            <OneOfPropertyView
+              key={name}
+              name={name}
+              properties={schema.oneOf}
+              required={required?.includes(name)}
+              doc={doc}
+            />
+          )
         }
 
         return (

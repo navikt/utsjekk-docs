@@ -4,21 +4,23 @@ import { OpenAPIV3_1 } from "openapi-types"
 import { ChevronRightIcon } from "@navikt/aksel-icons"
 
 import { Required } from "@/components/openapi/Required"
-
-import styles from "./PropertyView.module.css"
-
-import SchemaObject = OpenAPIV3_1.SchemaObject
 import { ObjectView } from "@/components/openapi/ObjectView"
 import { OpenApiDoc } from "@/lib/openapi/types"
 
+import styles from "./PropertyView.module.css"
+
+import ArraySchemaObject = OpenAPIV3_1.ArraySchemaObject
+import { isReferenceObject } from "@/lib/openapi/guards"
+import { resolveRef } from "@/lib/openapi/util"
+
 type Props = {
   name: string
-  schema: SchemaObject
+  schema: ArraySchemaObject
   required?: boolean
   doc: OpenApiDoc
 }
 
-export const ObjectPropertyView: React.FC<Props> = ({
+export const ArrayPropertyView: React.FC<Props> = ({
   name,
   schema,
   required,
@@ -29,6 +31,10 @@ export const ObjectPropertyView: React.FC<Props> = ({
   const toggleExpanded = () => {
     setExpanded((prev) => !prev)
   }
+
+  const items = isReferenceObject(schema.items)
+    ? resolveRef(schema.items.$ref, doc)
+    : schema.items
 
   return (
     <>
@@ -57,8 +63,8 @@ export const ObjectPropertyView: React.FC<Props> = ({
       {expanded && (
         <div className={styles.expandedContent}>
           <ObjectView
-            properties={schema.properties}
-            required={schema.required}
+            properties={items.properties}
+            required={items.required}
             doc={doc}
           />
         </div>

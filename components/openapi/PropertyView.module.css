@@ -77,9 +77,16 @@
   flex: 1;
 }
 
+.oneOfTabs > div > div {
+  margin-top: 0;
+}
+
 .separator {
   margin: var(--a-spacing-4) 0 0;
   border-color: var(--line-color);
+}
+.listItem:last-of-type .separator {
+  display: none;
 }
 
 .example {
@@ -99,4 +106,8 @@
 
 .expandedContent:not(:last-child) {
   border-left: 1px solid var(--a-border-default);
+}
+
+.tab {
+  font-size: var(--a-font-size-small);
 }

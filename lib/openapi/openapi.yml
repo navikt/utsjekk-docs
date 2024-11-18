@@ -203,7 +203,7 @@ components:
           example: '15507600333'
         saksbehandlerId:
           type: string
-          description: ID til saksbehandleren eller systemet som har godkjent utbetalingen
+          description: NAV-ident til saksbehandler, eller servicebruker til applikasjon dersom vedtaket er fattet fullautomatisk
           example: "A12345"
         utbetalinger:
           type: array
@@ -211,25 +211,25 @@ components:
             "$ref": "#/components/schemas/UtbetalingV2Dto"
         forrigeIverksetting:
           "$ref": "#/components/schemas/ForrigeIverksettingV2Dto"
-    StonadType:
+    StønadType:
       type: object
       properties:
         json:
           type: string
           writeOnly: true
-    StonadTypeDagpenger:
+    StønadTypeDagpenger:
       type: string
       allOf:
-        - "$ref": "#/components/schemas/StonadType"
+        - "$ref": "#/components/schemas/StønadType"
       enum:
         - DAGPENGER_ARBEIDSSoKER_ORDINaeR
         - DAGPENGER_PERMITTERING_ORDINaeR
         - DAGPENGER_PERMITTERING_FISKEINDUSTRI
         - DAGPENGER_EoS
-    StonadTypeTilleggsstonader:
+    StønadTypeTilleggsStønader:
       type: string
       allOf:
-        - "$ref": "#/components/schemas/StonadType"
+        - "$ref": "#/components/schemas/StønadType"
       enum:
         - TILSYN_BARN_ENSLIG_FORSoRGER
         - TILSYN_BARN_AAP
@@ -237,10 +237,10 @@ components:
         - LaeREMIDLER_ENSLIG_FORSoRGER
         - LaeREMIDLER_AAP
         - LaeREMIDLER_ETTERLATTE
-    StonadTypeTiltakspenger:
+    StønadTypeTiltakspenger:
       type: string
       allOf:
-        - "$ref": "#/components/schemas/StonadType"
+        - "$ref": "#/components/schemas/StønadType"
       enum:
         - ARBEIDSFORBEREDENDE_TRENING
         - ARBEIDSRETTET_REHABILITERING
@@ -259,16 +259,16 @@ components:
         - OPPFoLGING
         - UTVIDET_OPPFoLGING_I_NAV
         - UTVIDET_OPPFoLGING_I_OPPLaeRING
-    StonadsdataDagpengerDto:
+    StønadsdataDagpengerDto:
       required:
         - meldekortId
-        - stonadstype
+        - Stønadstype
       type: object
       allOf:
-        - "$ref": "#/components/schemas/StonadsdataDto"
+        - "$ref": "#/components/schemas/StønadsdataDto"
         - type: object
           properties:
-            stonadstype:
+            Stønadstype:
               type: string
               enum:
                 - DAGPENGER_ARBEIDSSoKER_ORDINaeR
@@ -282,27 +282,27 @@ components:
                 - AVDoD
             meldekortId:
               type: string
-    StonadsdataDto:
+    StønadsdataDto:
       required:
-        - stonadstype
+        - Stønadstype
       type: object
       properties:
         json:
           "$ref": "#/components/schemas/JsonNode"
-        stonadstype:
+        Stønadstype:
           oneOf:
-            - "$ref": "#/components/schemas/StonadTypeDagpenger"
-            - "$ref": "#/components/schemas/StonadTypeTilleggsstonader"
-            - "$ref": "#/components/schemas/StonadTypeTiltakspenger"
-    StonadsdataTilleggsstonaderDto:
+            - "$ref": "#/components/schemas/StønadTypeDagpenger"
+            - "$ref": "#/components/schemas/StønadTypeTilleggsStønader"
+            - "$ref": "#/components/schemas/StønadTypeTiltakspenger"
+    StønadsdataTilleggsstønaderDto:
       required:
-        - stonadstype
+        - Stønadstype
       type: object
       allOf:
-        - "$ref": "#/components/schemas/StonadsdataDto"
+        - "$ref": "#/components/schemas/StønadsdataDto"
         - type: object
           properties:
-            stonadstype:
+            Stønadstype:
               type: string
               enum:
                 - TILSYN_BARN_ENSLIG_FORSoRGER
@@ -313,18 +313,18 @@ components:
                 - LaeREMIDLER_ETTERLATTE
             brukersNavKontor:
               type: string
-    StonadsdataTiltakspengerV2Dto:
+    StønadsdataTiltakspengerV2Dto:
       required:
         - barnetillegg
         - brukersNavKontor
         - meldekortId
-        - stonadstype
+        - Stønadstype
       type: object
       allOf:
-        - "$ref": "#/components/schemas/StonadsdataDto"
+        - "$ref": "#/components/schemas/StønadsdataDto"
         - type: object
           properties:
-            stonadstype:
+            Stønadstype:
               type: string
               enum:
                 - ARBEIDSFORBEREDENDE_TRENING
@@ -352,21 +352,21 @@ components:
               type: string
     UtbetalingV2Dto:
       required:
-        - belop
+        - beløp
         - fraOgMedDato
         - satstype
-        - stonadsdata
+        - stønadsdata
         - tilOgMedDato
       type: object
       properties:
-        belop:
+        beløp:
           type: integer
           format: int32
         satstype:
           type: string
           enum:
             - DAGLIG
-            - MaaNEDLIG
+            - MÅNEDLIG
             - ENGANGS
         fraOgMedDato:
           type: string
@@ -374,11 +374,11 @@ components:
         tilOgMedDato:
           type: string
           format: date
-        stonadsdata:
+        stønadsdata:
           oneOf:
-            - "$ref": "#/components/schemas/StonadsdataDagpengerDto"
-            - "$ref": "#/components/schemas/StonadsdataTilleggsstonaderDto"
-            - "$ref": "#/components/schemas/StonadsdataTiltakspengerV2Dto"
+            - "$ref": "#/components/schemas/StønadsdataDagpengerDto"
+            - "$ref": "#/components/schemas/StønadsdataTilleggsstønaderDto"
+            - "$ref": "#/components/schemas/StønadsdataTiltakspengerV2Dto"
     IverksettV2Dto:
       required:
         - behandlingId
