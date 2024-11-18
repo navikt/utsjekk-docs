@@ -1,5 +1,9 @@
 @import "@navikt/ds-css";
 
+:root {
+  color-scheme: light dark;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }

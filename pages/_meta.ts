@@ -1,13 +1,17 @@
 export default {
   index: {
-    display: "hidden",
-  },
-  consumer_docs: {
-    title: "Dokumentasjon",
+    title: "Om tjenesten",
     type: "page",
   },
-  api_docs: {
-    title: "API-dokumentasjon",
+  kom_i_gang: {
+    title: "Kom i gang",
     type: "page",
-  }
+  },
+  api_spesifikasjon: {
+    title: "API-spesifikasjon",
+    type: "page",
+    theme: {
+      layout: "full",
+    },
+  },
 }

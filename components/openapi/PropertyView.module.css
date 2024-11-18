@@ -1,0 +1,102 @@
+
+.listItem {
+  --left-spacing: var(--a-spacing-8);
+  --vertical-spacing: var(--a-spacing-2);
+  --line-color: var(--a-border-default);
+  --example-background: light-dark(
+      var(--a-surface-neutral-subtle),
+      var(--a-surface-neutral-active)
+  );
+  display: flex;
+  gap: var(--a-spacing-4);
+  position: relative;
+  padding-left: var(--left-spacing);
+  padding-top: var(--vertical-spacing);
+  padding-bottom: var(--vertical-spacing);
+}
+
+/*Horizontal line to the left*/
+.listItem:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: calc(21px / 2 + var(--vertical-spacing));
+  transform: translateY(-50%);
+  width: calc(var(--left-spacing) - var(--a-spacing-2));
+  height: 1px;
+  background: var(--line-color);
+}
+
+/*Vertical line to the left*/
+.listItem:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: var(--line-color);
+}
+
+/*Cut the first half of the line to the left of the first listItem*/
+.listItem:first-of-type:after {
+  top: calc(21px / 2 + var(--vertical-spacing));
+}
+
+/*Cut the last half of the line to the left of the last listItem*/
+.listItem:last-of-type:after {
+  height: calc(21px / 2 + var(--vertical-spacing));
+}
+
+.key {
+  font-size: var(--a-font-size-small);
+  width: 300px;
+}
+
+.pre {
+  font-size: var(--a-font-size-small);
+}
+
+.expandButton {
+  display: flex;
+  align-items: center;
+}
+
+.expandIcon {
+  transition: all 0.2s ease;
+}
+
+.expandIcon.expanded {
+  transform: rotate(90deg);
+}
+
+.value {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-spacing-2);
+  flex: 1;
+}
+
+.separator {
+  margin: var(--a-spacing-4) 0 0;
+  border-color: var(--line-color);
+}
+
+.example {
+  background-color: var(--example-background);
+  border: var(--a-border-default);
+  padding: var(--a-spacing-1);
+}
+
+.expandedContent {
+  padding: var(--a-spacing-4);
+  padding-left: var(--a-spacing-6);
+  background: light-dark(
+      var(--a-surface-subtle),
+      var(--a-surface-active)
+  );
+}
+
+.expandedContent:not(:last-child) {
+  border-left: 1px solid var(--a-border-default);
+}

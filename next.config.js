@@ -9,6 +9,14 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  webpack: (config, options) => {
+    config.module.rules.push({
+      test: /\.ya?ml$/,
+      loader: 'yml-loader'
+    })
+
+    return config
+  }
 }
 
 export default withNextra({
