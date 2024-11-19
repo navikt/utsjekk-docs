@@ -15,7 +15,9 @@ paths:
       tags:
         - Simulering
       summary: Simuler utbetaling
-      description: En dry-run av iverksetting av en utbetaling. Responsen man mottar gir et bilde av hvordan en utbetaling ville sett ut dersom man iverksatte den på samme tidspunkt som man simulerte.
+      description:
+        Utfører en "dry run", eller en simulering, av en utbetaling mot Oppdragssystemet. Simuleringen kan fortelle om 
+        iverksettingen vil være en ny utbetaling, en feilutbetaling eller en etterbetaling.
       operationId: hentSimulering
       requestBody:
         content:
@@ -25,41 +27,25 @@ paths:
         required: true
       responses:
         '200':
-          description: simulering utfort ok
+          description: Simulering utført OK
           content:
             application/json:
               schema:
-                type: object
+                "$ref": "#/components/schemas/SimuleringRespons"
         '204':
-          description: ingen endring i utbetaling paa saken, simulering utfores ikke
-          content:
-            application/json:
-              schema:
-                type: object
+          description: Ingen endring i utbetaling på saken, simulering utføres ikke
         '400':
-          description: ugyldig format paa simulering
-          content:
-            application/json:
-              schema:
-                type: object
+          description: Ugyldig format på simulering
         '409':
-          description: simuleringen er i konflikt med tidligere utbetalinger
-          content:
-            application/json:
-              schema:
-                type: object
+          description: Simuleringen er i konflikt med tidligere utbetalinger
         '503':
           description: OS/UR er midlertidig stengt
-          content:
-            application/json:
-              schema:
-                type: object
   "/api/iverksetting/v2":
     post:
       tags:
         - Iverksetting
-      summary: Send utbetaling til Oppdrag
-      description: Iverksetter utbetaling mot oppdrag.
+      summary: Send utbetaling
+      description: Iverksetter utbetalingen mot Oppdragssystemet.
       operationId: iverksett
       requestBody:
         content:
@@ -69,13 +55,13 @@ paths:
         required: true
       responses:
         '202':
-          description: iverksetting er mottatt
+          description: Utbetalingen er mottatt
         '400':
-          description: ugyldig format paa iverksetting
+          description: Ugyldig format på utbetalingen
         '403':
-          description: ikke autorisert til aa starte iverksetting
+          description: Ikke autorisert til å iverksette utbetaling
         '409':
-          description: iverksetting er i konflikt med tidligere iverksetting
+          description: Utbetalingen er i konflikt med tidligere utbetaling
   "/api/iverksetting/{sakId}/{behandlingId}/{iverksettingId}/status":
     get:
       tags:
@@ -89,19 +75,30 @@ paths:
           required: true
           schema:
             type: string
+            maxLength: 25
+            minLength: 1
+            description: På grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
+              på 25 tegn for sakId
         - name: behandlingId
           in: path
           required: true
           schema:
             type: string
+            maxLength: 30
+            minLength: 1
+            description: På grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
+              på 30 tegn for behandlingId
         - name: iverksettingId
           in: path
           required: true
           schema:
             type: string
+            format: uuid
+            description:
+              Id på iverksettingen. Brukes kun når vedtaksløsningen må iverksette flere ganger for samme behandling/vedtak.
       responses:
         '200':
-          description: Status returnert i body
+          description: Sjekket status OK
           content:
             application/json:
               schema:
@@ -110,20 +107,10 @@ paths:
                   - SENDT_TIL_OPPDRAG
                   - FEILET_MOT_OPPDRAG
                   - OK
-                  - IKKE_PaaBEGYNT
+                  - IKKE_PÅBEGYNT
                   - OK_UTEN_UTBETALING
         '404':
-          description: Kunne ikke finne iverksetting
-          content:
-            application/json:
-              schema:
-                type: string
-                enum:
-                  - SENDT_TIL_OPPDRAG
-                  - FEILET_MOT_OPPDRAG
-                  - OK
-                  - IKKE_PaaBEGYNT
-                  - OK_UTEN_UTBETALING
+          description: Kunne ikke finne utbetaling
   "/api/iverksetting/{sakId}/{behandlingId}/status":
     get:
       tags:
@@ -137,14 +124,22 @@ paths:
           required: true
           schema:
             type: string
+            maxLength: 25
+            minLength: 1
+            description: På grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
+              på 25 tegn for sakId
         - name: behandlingId
           in: path
           required: true
           schema:
             type: string
+            maxLength: 30
+            minLength: 1
+            description: På grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
+              på 30 tegn for behandlingId
       responses:
         '200':
-          description: Status returnert i body
+          description: Sjekket status OK
           content:
             application/json:
               schema:
@@ -153,20 +148,10 @@ paths:
                   - SENDT_TIL_OPPDRAG
                   - FEILET_MOT_OPPDRAG
                   - OK
-                  - IKKE_PaaBEGYNT
+                  - IKKE_PÅBEGYNT
                   - OK_UTEN_UTBETALING
         '404':
-          description: Kunne ikke finne iverksetting
-          content:
-            application/json:
-              schema:
-                type: string
-                enum:
-                  - SENDT_TIL_OPPDRAG
-                  - FEILET_MOT_OPPDRAG
-                  - OK
-                  - IKKE_PaaBEGYNT
-                  - OK_UTEN_UTBETALING
+          description: Kunne ikke finne utbetaling
 components:
   schemas:
     ForrigeIverksettingV2Dto:
@@ -226,6 +211,125 @@ components:
             "$ref": "#/components/schemas/UtbetalingV2Dto"
         forrigeIverksetting:
           "$ref": "#/components/schemas/ForrigeIverksettingV2Dto"
+    SimuleringRespons:
+      required:
+        - oppsummeringer
+        - detaljer
+      type: object
+      properties:
+        oppsummeringer:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OppsummeringForPeriode"
+        detaljer:
+          "$ref":
+            "#/components/schemas/SimuleringDetaljer"
+    SimuleringDetaljer:
+      required:
+        - gjelderId
+        - datoBeregnet
+        - totalBeløp
+        - perioder
+      type: object
+      properties:
+        gjelderId:
+          type: string
+        datoBeregnet:
+          type: string
+          format: date
+        totalBeløp:
+          type: integer
+        perioder:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Periode"
+    Periode:
+      required:
+        - fom
+        - tom
+        - posteringer
+      type: object
+      properties:
+        fom:
+          type: string
+          format: date
+        tom:
+          type: string
+          format: date
+        posteringer:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Postering"
+    Postering:
+      required:
+        - fagområde
+        - sakId
+        - fom
+        - tom
+        - beløp
+        - type
+        - klassekode
+      type: object
+      properties:
+        fagområde:
+          type: string
+          enum:
+            - TILLEGGSSTØNADER
+            - TILLEGGSSTØNADER_ARENA
+            - TILLEGGSSTØNADER_ARENA_MANUELL_POSTERING
+            - DAGPENGER
+            - DAGPENGER_MANUELL_POSTERING
+            - DAGPENGER_ARENA
+            - DAGPENGER_ARENA_MANUELL_POSTERING
+            - TILTAKSPENGER
+            - TILTAKSPENGER_ARENA
+            - TILTAKSPENGER_ARENA_MANUELL_POSTERING
+        sakId:
+          type: string
+        fom:
+          type: string
+          format: date
+        tom:
+          type: string
+          format: date
+        beløp:
+          type: integer
+        type:
+          type: string
+          enum:
+            - YTELSE
+            - FEILUTBETALING
+            - FORSKUDSSKATT
+            - JUSTERING
+            - TREKK
+            - MOTPOSTERING
+        klassekode:
+          type: string
+    OppsummeringForPeriode:
+      required:
+        - fom
+        - tom
+        - tidligereUtbetalt
+        - nyUtbetaling
+        - totalEtterbetaling
+        - totalFeilutbetaling
+      type: object
+      properties:
+        fom:
+          type: string
+          format: date
+        tom:
+          type: string
+          format: date
+        tidligereUtbetalt:
+          type: integer
+        nyUtbetaling:
+          type: integer
+        totalEtterbetaling:
+          type: integer
+        totalFeilutbetaling:
+          type: integer
+
     StønadType:
       type: object
       properties:
@@ -237,21 +341,21 @@ components:
       allOf:
         - "$ref": "#/components/schemas/StønadType"
       enum:
-        - DAGPENGER_ARBEIDSSoKER_ORDINaeR
-        - DAGPENGER_PERMITTERING_ORDINaeR
+        - DAGPENGER_ARBEIDSSØKER_ORDINÆR
+        - DAGPENGER_PERMITTERING_ORDINÆR
         - DAGPENGER_PERMITTERING_FISKEINDUSTRI
-        - DAGPENGER_EoS
+        - DAGPENGER_EØS
     StønadTypeTilleggsStønader:
       type: string
       allOf:
         - "$ref": "#/components/schemas/StønadType"
       enum:
-        - TILSYN_BARN_ENSLIG_FORSoRGER
+        - TILSYN_BARN_ENSLIG_FORSØRGER
         - TILSYN_BARN_AAP
         - TILSYN_BARN_ETTERLATTE
-        - LaeREMIDLER_ENSLIG_FORSoRGER
-        - LaeREMIDLER_AAP
-        - LaeREMIDLER_ETTERLATTE
+        - LÆREMIDLER_ENSLIG_FORSØRGER
+        - LÆREMIDLER_AAP
+        - LÆREMIDLER_ETTERLATTE
     StønadTypeTiltakspenger:
       type: string
       allOf:
@@ -263,21 +367,21 @@ components:
         - AVKLARING
         - DIGITAL_JOBBKLUBB
         - ENKELTPLASS_AMO
-        - ENKELTPLASS_VGS_OG_HoYERE_YRKESFAG
-        - FORSoK_OPPLaeRING_LENGRE_VARIGHET
+        - ENKELTPLASS_VGS_OG_HØYERE_YRKESFAG
+        - FORSØK_OPPLÆRING_LENGRE_VARIGHET
         - GRUPPE_AMO
-        - GRUPPE_VGS_OG_HoYERE_YRKESFAG
-        - HoYERE_UTDANNING
-        - INDIVIDUELL_JOBBSToTTE
-        - INDIVIDUELL_KARRIERESToTTE_UNG
+        - GRUPPE_VGS_OG_HØYERE_YRKESFAG
+        - HØYERE_UTDANNING
+        - INDIVIDUELL_JOBBSTØTTE
+        - INDIVIDUELL_KARRIERESTØTTE_UNG
         - JOBBKLUBB
-        - OPPFoLGING
-        - UTVIDET_OPPFoLGING_I_NAV
-        - UTVIDET_OPPFoLGING_I_OPPLaeRING
+        - OPPFØLGING
+        - UTVIDET_OPPFØLGING_I_NAV
+        - UTVIDET_OPPFØLGING_I_OPPLÆRING
     StønadsdataDagpengerDto:
       required:
         - meldekortId
-        - Stønadstype
+        - stønadstype
       type: object
       allOf:
         - "$ref": "#/components/schemas/StønadsdataDto"
@@ -286,15 +390,15 @@ components:
             Stønadstype:
               type: string
               enum:
-                - DAGPENGER_ARBEIDSSoKER_ORDINaeR
-                - DAGPENGER_PERMITTERING_ORDINaeR
+                - DAGPENGER_ARBEIDSSØKER_ORDINÆR
+                - DAGPENGER_PERMITTERING_ORDINÆR
                 - DAGPENGER_PERMITTERING_FISKEINDUSTRI
-                - DAGPENGER_EoS
+                - DAGPENGER_EØS
             ferietillegg:
               type: string
               enum:
-                - ORDINaeR
-                - AVDoD
+                - ORDINÆR
+                - AVDØD
             meldekortId:
               type: string
     StønadsdataDto:

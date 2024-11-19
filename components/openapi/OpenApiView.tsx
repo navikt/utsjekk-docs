@@ -11,6 +11,7 @@ import { Tag } from "@/components/Tag"
 import OperationObject = OpenAPIV3_1.OperationObject
 
 import styles from "./OpenApiView.module.css"
+import { ResponsesView } from "@/components/openapi/ResponsesView"
 
 enum Method {
   Get = "get",
@@ -89,11 +90,20 @@ export const OpenApiView: React.FC = () => {
                         {pathItem.description}
                       </BodyLong>
                       {pathItem.parameters && (
-                        <ParametersView parameters={pathItem.parameters} />
+                        <ParametersView
+                          parameters={pathItem.parameters}
+                          doc={doc}
+                        />
                       )}
                       {pathItem.requestBody && (
                         <RequestBodyView
                           requestBody={pathItem.requestBody}
+                          doc={doc}
+                        />
+                      )}
+                      {pathItem.responses && (
+                        <ResponsesView
+                          responses={pathItem.responses}
                           doc={doc}
                         />
                       )}
