@@ -10,3 +10,7 @@ export const resolveRef = (
   // @ts-ignore
   return components.reduce((acc, cur) => acc[cur], doc)
 }
+
+export const getRefName = (ref: string): string => {
+  return ref.split("/").slice(-1).pop()!
+}

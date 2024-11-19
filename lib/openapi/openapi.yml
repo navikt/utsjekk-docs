@@ -178,10 +178,15 @@ components:
           maxLength: 30
           minLength: 1
           type: string
-          description: Paa grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
-            paa 30 tegn for behandlingId
+          description:
+            Id på behandlingen i vedtaksløsningen. Brukes for å spore utbetalingen tilbake til den
+            konkrete hendelsen som trigget den. Kan også være id på vedtak, meldekort etc. DVH bruker denne når de
+            sammenstiller stønadsstatistikk.
         iverksettingId:
           type: string
+          format: uuid
+          description:
+            Id på iverksettingen. Brukes kun når vedtaksløsningen må iverksette flere ganger for samme behandling/vedtak.
     JsonNode:
       type: object
     SimuleringRequestV2Dto:
@@ -195,10 +200,20 @@ components:
       properties:
         sakId:
           type: string
+          maxLength: 25
+          minLength: 1
+          description: På grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
+            på 25 tegn for sakId
         behandlingId:
           type: string
+          maxLength: 30
+          minLength: 1
+          description: På grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
+            på 30 tegn for behandlingId
         personident:
           type: string
+          maxLength: 11
+          minLength: 11
           description: Fødselsnummer eller D-nummer
           example: '15507600333'
         saksbehandlerId:
@@ -313,6 +328,10 @@ components:
                 - LaeREMIDLER_ETTERLATTE
             brukersNavKontor:
               type: string
+              minLength: 4
+              maxLength: 4
+              description:
+                Enhetsnummeret på NAV-kontoret som brukeren tilhører.
     StønadsdataTiltakspengerV2Dto:
       required:
         - barnetillegg
@@ -348,6 +367,10 @@ components:
               type: boolean
             brukersNavKontor:
               type: string
+              minLength: 4
+              maxLength: 4
+              description:
+                Enhetsnummeret på NAV-kontoret som brukeren tilhører.
             meldekortId:
               type: string
     UtbetalingV2Dto:
@@ -362,23 +385,34 @@ components:
         beløp:
           type: integer
           format: int32
+          description:
+            Brutto beløp i hele kroner iht. satstypen. For dagsats og månedssats blir verdien multiplisert iht. 
+            satstypen og perioden for å finne totalbeløpet for utbetalingen. For engangssats er verdien per definisjon 
+            totalbeløpet som utbetales.
         satstype:
           type: string
           enum:
             - DAGLIG
             - MÅNEDLIG
             - ENGANGS
+          description: Avgjør totalbeløpet for utbetalingsperioden.
         fraOgMedDato:
           type: string
           format: date
+          description:
+            Første dato for utbetalingsperioden. For månedssats må denne alltid være første dag i måneden.
         tilOgMedDato:
           type: string
           format: date
+          description:
+            Siste dato for utbetalingsperioden. For månedssats må denne alltid være siste dag i måneden.
         stønadsdata:
           oneOf:
             - "$ref": "#/components/schemas/StønadsdataDagpengerDto"
             - "$ref": "#/components/schemas/StønadsdataTilleggsstønaderDto"
             - "$ref": "#/components/schemas/StønadsdataTiltakspengerV2Dto"
+          description:
+            Et sett med ytelsesspesifikke felter for utbetalingen.
     IverksettV2Dto:
       required:
         - behandlingId
@@ -391,24 +425,32 @@ components:
           maxLength: 25
           minLength: 1
           type: string
-          description: Paa grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
-            paa 25 tegn for sakId
+          description: Id på saken i vedtaksløsningen.
         behandlingId:
           maxLength: 30
           minLength: 1
           type: string
-          description: Paa grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
-            paa 30 tegn for behandlingId
+          description:
+            Id på behandlingen i vedtaksløsningen. Brukes for å spore utbetalingen tilbake til den 
+            konkrete hendelsen som trigget den. Kan også være id på vedtak, meldekort etc. DVH bruker denne når de 
+            sammenstiller stønadsstatistikk.
         iverksettingId:
           type: string
+          format: uuid
+          description:
+            Id på iverksettingen. Brukes kun når vedtaksløsningen må iverksette flere ganger for samme behandling/vedtak.
         personident:
           type: string
-          description: Fodselsnummer eller D-nummer
+          description:
+            Naturlig ident (fødselsnummer eller D-nummer) på personen som skal få utbetalingen. Utsjekk validerer at 
+            identen har gyldig format.
           example: '15507600333'
         vedtak:
           "$ref": "#/components/schemas/VedtaksdetaljerV2Dto"
         forrigeIverksetting:
           "$ref": "#/components/schemas/ForrigeIverksettingV2Dto"
+          description:
+            Identifikasjon på forrige iverksetting. Settes kun når det finnes tidligere iverksettinger på saken.
     VedtaksdetaljerV2Dto:
       required:
         - beslutterId
@@ -420,17 +462,22 @@ components:
         vedtakstidspunkt:
           type: string
           format: date-time
+          description: Tidspunktet vedtaket ble fattet.
         saksbehandlerId:
           pattern: "^[A-Z]\\d{6}$"
           type: string
-          description: NAV-ident til saksbehandler, eller servicebruker til applikasjon
-            dersom vedtaket er fattet fullautomatisk
+          description:
+            Enten NAV-ident på saksbehandler når behandlingen er gjort manuelt, eller navn på 
+            system/applikasjon/servicebruker dersom behandlingen er gjort automatisk. Utsjekk gjør ingen validering av 
+            dette feltet.
           example: Z123456
         beslutterId:
           pattern: "^[A-Z]\\d{6}$"
           type: string
-          description: NAV-ident til beslutter, eller servicebruker til applikasjon
-            dersom vedtaket er fattet fullautomatisk
+          description:
+            Enten NAV-ident på beslutter når behandlingen er gjort manuelt, eller navn på 
+            system/applikasjon/servicebruker dersom behandlingen er gjort automatisk. Utsjekk gjør ingen validering av 
+            dette feltet.
           example: Z123456
         utbetalinger:
           type: array

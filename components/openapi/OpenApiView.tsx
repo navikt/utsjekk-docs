@@ -71,11 +71,19 @@ export const OpenApiView: React.FC = () => {
                       >
                         {pathItem.summary}
                       </Heading>
-                      <div className={styles.methodAndPath}>
-                        <Tag type={calloutTypeForMethod(method)} emoji>
+                      <div id={pathItem.operationId} className={styles.path}>
+                        <Tag
+                          className={styles.method}
+                          type={calloutTypeForMethod(method)}
+                          emoji
+                        >
                           {method}
                         </Tag>
                         <pre>{path}</pre>
+                        <a
+                          className={styles.operationAnchor}
+                          href={`#${pathItem.operationId}`}
+                        />
                       </div>
                       <BodyLong className={styles.description}>
                         {pathItem.description}

@@ -3,14 +3,13 @@ import { OpenAPIV3, OpenAPIV3_1 } from "openapi-types"
 import { isReferenceObject } from "@/lib/openapi/guards"
 import { resolveRef } from "@/lib/openapi/util"
 import { OpenApiDoc } from "@/lib/openapi/types"
-import { PropertyView } from "@/components/openapi/PropertyView"
-import { StringPropertyView } from "@/components/openapi/StringPropertyView"
-import { IntegerPropertyView } from "@/components/openapi/IntegerPropertyView"
+import { NonArrayPropertyView } from "@/components/openapi/NonArrayPropertyView"
 import { ObjectPropertyView } from "@/components/openapi/ObjectPropertyView"
 import { ArrayPropertyView } from "@/components/openapi/ArrayPropertyView"
 import { OneOfPropertyView } from "@/components/openapi/OneOfPropertyView"
 
 import styles from "./ObjectView.module.css"
+
 import NonArraySchemaObject = OpenAPIV3.NonArraySchemaObject
 import SchemaObject = OpenAPIV3_1.SchemaObject
 import ReferenceObject = OpenAPIV3_1.ReferenceObject
@@ -45,13 +44,9 @@ export const ObjectView: React.FC<Props> = ({
     return null
   }
 
-  console.log(allOf)
-
   const composedProperties = allOf
     ? composeAllOf(properties ?? {}, allOf ?? [])
     : properties
-
-  console.log(composedProperties)
 
   return (
     <ul className={styles.objectView}>
@@ -61,30 +56,12 @@ export const ObjectView: React.FC<Props> = ({
           : value
 
         switch (schema.type) {
-          case "string":
-            return (
-              <StringPropertyView
-                key={name}
-                name={name}
-                schema={schema as NonArraySchemaObject}
-                required={required?.includes(name)}
-              />
-            )
-          case "integer":
-            return (
-              <IntegerPropertyView
-                key={name}
-                name={name}
-                schema={schema as NonArraySchemaObject}
-                required={required?.includes(name)}
-              />
-            )
           case "object":
             return (
               <ObjectPropertyView
                 key={name}
                 name={name}
-                schema={schema as NonArraySchemaObject}
+                schema={value}
                 required={required?.includes(name)}
                 doc={doc}
               />
@@ -114,10 +91,10 @@ export const ObjectView: React.FC<Props> = ({
         }
 
         return (
-          <PropertyView
+          <NonArrayPropertyView
             key={name}
             name={name}
-            schema={schema}
+            schema={schema as NonArraySchemaObject}
             required={required?.includes(name)}
           />
         )
