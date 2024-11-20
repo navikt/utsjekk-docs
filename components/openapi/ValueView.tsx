@@ -1,9 +1,10 @@
 import { OpenAPIV3_1 } from "openapi-types"
-import { BodyLong, Detail } from "@navikt/ds-react"
+import { BodyLong } from "@navikt/ds-react"
 
 import { isReferenceObject } from "@/lib/openapi/guards"
 import { OpenApiDoc } from "@/lib/openapi/types"
 import { resolveRef } from "@/lib/openapi/util"
+import { EnumView } from "@/components/openapi/EnumView"
 
 import styles from "./ValueView.module.css"
 import SchemaObject = OpenAPIV3_1.SchemaObject
@@ -24,18 +25,7 @@ export const ValueView: React.FC<Props> = ({ schema, doc }) => {
   return (
     <div className={styles.value}>
       {description && <BodyLong>{description}</BodyLong>}
-      {schemaObject.enum && (
-        <>
-          <Detail>En av:</Detail>
-          <ul className={styles.enumList}>
-            {schemaObject.enum.map((it) => (
-              <li key={it} className={styles.enumValue}>
-                <pre className={styles.pre}>{it}</pre>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
+      {schemaObject.enum && <EnumView values={schemaObject.enum} />}
     </div>
   )
 }

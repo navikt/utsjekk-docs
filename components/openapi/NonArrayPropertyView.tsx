@@ -1,13 +1,12 @@
 import { OpenAPIV3_1 } from "openapi-types"
 import { BodyShort } from "@navikt/ds-react"
-
-import { Required } from "@/components/openapi/Required"
 import { ExampleView } from "@/components/openapi/ExampleView"
+import { KeyView } from "@/components/openapi/KeyView"
+import { EnumView } from "@/components/openapi/EnumView"
 
 import styles from "./PropertyView.module.css"
 
 import NonArraySchemaObject = OpenAPIV3_1.NonArraySchemaObject
-import { KeyView } from "@/components/openapi/KeyView"
 
 type StringRangeOptions = {
   minLength?: number
@@ -98,6 +97,7 @@ export const NonArrayPropertyView: React.FC<Props> = ({
         </pre>
         <ExampleView schema={schema} />
         {schema.description && <BodyShort>{schema.description}</BodyShort>}
+        {schema.enum && <EnumView values={schema.enum} />}
         <hr className={styles.separator} />
       </div>
     </li>

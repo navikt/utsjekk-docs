@@ -1,18 +1,18 @@
 import { useState } from "react"
 import clsx from "clsx"
-import { ChevronRightIcon } from "@navikt/aksel-icons"
 import { OpenAPIV3_1 } from "openapi-types"
+import { Detail } from "@navikt/ds-react"
+import { ChevronRightIcon } from "@navikt/aksel-icons"
 
-import styles from "./ResponseView.module.css"
 import { isReferenceObject } from "@/lib/openapi/guards"
 import { OpenApiDoc } from "@/lib/openapi/types"
 import { resolveRef } from "@/lib/openapi/util"
-import { ObjectView } from "@/components/openapi/ObjectView"
-import { Detail } from "@navikt/ds-react"
+import { SchemaObjectView } from "@/components/openapi/SchemaObjectView"
+
+import styles from "./ResponseView.module.css"
+
 import ResponseObject = OpenAPIV3_1.ResponseObject
 import SchemaObject = OpenAPIV3_1.SchemaObject
-import { NonArrayPropertyView } from "@/components/openapi/NonArrayPropertyView"
-import { SchemaObjectView } from "@/components/openapi/SchemaObjectView"
 
 type Variant = "success" | "error" | "neutral"
 
