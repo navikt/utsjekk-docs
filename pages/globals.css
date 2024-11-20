@@ -2,6 +2,10 @@
 
 :root {
   color-scheme: light dark;
+  --example-background: light-dark(
+      var(--a-surface-neutral-subtle),
+      var(--a-surface-neutral-active)
+  );
 }
 
 *, *::before, *::after {

@@ -3,10 +3,6 @@
   --left-spacing: var(--a-spacing-8);
   --vertical-spacing: var(--a-spacing-2);
   --line-color: var(--a-border-default);
-  --example-background: light-dark(
-      var(--a-surface-neutral-subtle),
-      var(--a-surface-neutral-active)
-  );
   display: flex;
   gap: var(--a-spacing-4);
   position: relative;

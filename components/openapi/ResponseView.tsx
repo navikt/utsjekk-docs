@@ -12,6 +12,7 @@ import { Detail } from "@navikt/ds-react"
 import ResponseObject = OpenAPIV3_1.ResponseObject
 import SchemaObject = OpenAPIV3_1.SchemaObject
 import { NonArrayPropertyView } from "@/components/openapi/NonArrayPropertyView"
+import { SchemaObjectView } from "@/components/openapi/SchemaObjectView"
 
 type Variant = "success" | "error" | "neutral"
 
@@ -82,11 +83,7 @@ const ExpandableResponseView: React.FC<Props> = ({
                 {/*  switch (schemaObject.type) {*/}
                 {/*  }*/}
                 {/*})()}*/}
-                <ObjectView
-                  properties={schemaObject.properties}
-                  required={schemaObject.required}
-                  doc={doc}
-                />
+                <SchemaObjectView schema={schemaObject} doc={doc} />
               </div>
             )
           })}

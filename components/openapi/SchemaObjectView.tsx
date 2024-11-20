@@ -2,6 +2,7 @@ import { OpenAPIV3_1 } from "openapi-types"
 import { OpenApiDoc } from "@/lib/openapi/types"
 import { ObjectView } from "@/components/openapi/ObjectView"
 import SchemaObject = OpenAPIV3_1.SchemaObject
+import { ValueView } from "@/components/openapi/ValueView"
 
 type Props = {
   schema: SchemaObject
@@ -18,7 +19,7 @@ export const SchemaObjectView: React.FC<Props> = ({ schema, doc }) => {
     // return <ArrayPropertyView name={name} schema={schema} doc={doc} />
     case "string":
     case "integer":
-    // return <NonArrayPropertyView name={name} schema={schema} />
+      return <ValueView schema={schema} doc={doc} />
     case "object":
       return (
         <ObjectView

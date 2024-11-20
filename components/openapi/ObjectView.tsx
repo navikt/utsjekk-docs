@@ -1,7 +1,7 @@
 import { OpenAPIV3, OpenAPIV3_1 } from "openapi-types"
 
 import { isReferenceObject } from "@/lib/openapi/guards"
-import { resolveRef } from "@/lib/openapi/util"
+import { getRefName, resolveRef } from "@/lib/openapi/util"
 import { OpenApiDoc } from "@/lib/openapi/types"
 import { NonArrayPropertyView } from "@/components/openapi/NonArrayPropertyView"
 import { ObjectPropertyView } from "@/components/openapi/ObjectPropertyView"
@@ -60,8 +60,11 @@ export const ObjectView: React.FC<Props> = ({
             return (
               <ObjectPropertyView
                 key={name}
-                name={name}
-                schema={value}
+                keyName={name}
+                typeName={
+                  isReferenceObject(value) ? getRefName(value.$ref) : undefined
+                }
+                schema={schema}
                 required={required?.includes(name) ?? false}
                 doc={doc}
               />
