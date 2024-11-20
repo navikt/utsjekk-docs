@@ -10,6 +10,7 @@ import ReferenceObject = OpenAPIV3_1.ReferenceObject
 import RequestBodyObject = OpenAPIV3_1.RequestBodyObject
 
 import styles from "./RequestBodyView.module.css"
+import { SchemaObjectView } from "@/components/openapi/SchemaObjectView"
 
 type Props = {
   requestBody: ReferenceObject | RequestBodyObject
@@ -43,13 +44,7 @@ export const RequestBodyView: React.FC<Props> = ({ requestBody, doc }) => {
               </div>
               {required && <Required />}
             </div>
-            {schema && (
-              <ObjectView
-                required={schema.required}
-                properties={schema.properties}
-                doc={doc}
-              />
-            )}
+            {schema && <SchemaObjectView schema={schema} doc={doc} />}
           </div>
         )
       })}

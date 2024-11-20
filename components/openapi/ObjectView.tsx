@@ -62,7 +62,7 @@ export const ObjectView: React.FC<Props> = ({
                 key={name}
                 name={name}
                 schema={value}
-                required={required?.includes(name)}
+                required={required?.includes(name) ?? false}
                 doc={doc}
               />
             )
@@ -72,7 +72,7 @@ export const ObjectView: React.FC<Props> = ({
                 key={name}
                 name={name}
                 schema={schema as ArraySchemaObject}
-                required={required?.includes(name)}
+                required={required?.includes(name) ?? false}
                 doc={doc}
               />
             )
@@ -84,7 +84,7 @@ export const ObjectView: React.FC<Props> = ({
               key={name}
               name={name}
               properties={schema.oneOf}
-              required={required?.includes(name)}
+              required={required?.includes(name) ?? false}
               doc={doc}
             />
           )
@@ -95,7 +95,7 @@ export const ObjectView: React.FC<Props> = ({
             key={name}
             name={name}
             schema={schema as NonArraySchemaObject}
-            required={required?.includes(name)}
+            required={required?.includes(name) ?? false}
           />
         )
       })}

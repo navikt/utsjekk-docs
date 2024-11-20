@@ -1,0 +1,12 @@
+.expandButton {
+  display: flex;
+  align-items: center;
+}
+
+.expandIcon {
+  transition: all 0.2s ease;
+}
+
+.expandIcon.expanded {
+  transform: rotate(90deg);
+}

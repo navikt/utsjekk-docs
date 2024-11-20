@@ -1,46 +1,29 @@
-import { OpenAPIV3, OpenAPIV3_1 } from "openapi-types"
-
-import { isReferenceObject } from "@/lib/openapi/guards"
-import { resolveRef } from "@/lib/openapi/util"
+import { OpenAPIV3_1 } from "openapi-types"
 import { OpenApiDoc } from "@/lib/openapi/types"
-import { ObjectPropertyView } from "@/components/openapi/ObjectPropertyView"
-import { NonArrayPropertyView } from "@/components/openapi/NonArrayPropertyView"
-import { ArrayPropertyView } from "@/components/openapi/ArrayPropertyView"
-import { PropertyView } from "@/components/openapi/PropertyView"
-
-import ReferenceObject = OpenAPIV3.ReferenceObject
+import { ObjectView } from "@/components/openapi/ObjectView"
 import SchemaObject = OpenAPIV3_1.SchemaObject
-import ArraySchemaObject = OpenAPIV3_1.ArraySchemaObject
-import NonArraySchemaObject = OpenAPIV3_1.NonArraySchemaObject
-// @ts-ignore
-import MixedSchemaObject = OpenAPIV3_1.MixedSchemaObject
 
 type Props = {
-  name: string
-  schema: SchemaObject | ReferenceObject
+  schema: SchemaObject
   doc: OpenApiDoc
 }
 
-export const SchemaObjectView: React.FC<Props> = ({ name, schema, doc }) => {
-  const data: ArraySchemaObject | NonArraySchemaObject | MixedSchemaObject =
-    isReferenceObject(schema) ? resolveRef(schema.$ref, doc) : schema
-
-  switch (data.type) {
+export const SchemaObjectView: React.FC<Props> = ({ schema, doc }) => {
+  switch (schema.type) {
     case "null":
     case "number":
     case "boolean":
-      return <PropertyView name={name} schema={data} />
+    // return <PropertyView name={name} schema={schema} />
     case "array":
-      return <ArrayPropertyView name={name} schema={data} doc={doc} />
+    // return <ArrayPropertyView name={name} schema={schema} doc={doc} />
     case "string":
     case "integer":
-      return <NonArrayPropertyView name={name} schema={data} />
+    // return <NonArrayPropertyView name={name} schema={schema} />
     case "object":
       return (
-        <ObjectPropertyView
-          name={name}
-          required={data.required?.includes(name)}
-          schema={data}
+        <ObjectView
+          required={schema.required}
+          properties={schema.properties}
           doc={doc}
         />
       )

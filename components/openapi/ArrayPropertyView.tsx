@@ -2,22 +2,21 @@ import { useState } from "react"
 import clsx from "clsx"
 import { OpenAPIV3_1 } from "openapi-types"
 import { ChevronRightIcon } from "@navikt/aksel-icons"
-
-import { Required } from "@/components/openapi/Required"
 import { ObjectView } from "@/components/openapi/ObjectView"
 import { OpenApiDoc } from "@/lib/openapi/types"
 import { getRefName, resolveRef } from "@/lib/openapi/util"
 import { isReferenceObject } from "@/lib/openapi/guards"
 
 import styles from "./PropertyView.module.css"
-
+import { KeyView } from "@/components/openapi/KeyView"
 import ArraySchemaObject = OpenAPIV3_1.ArraySchemaObject
 import ReferenceObject = OpenAPIV3_1.ReferenceObject
+import { ExpandButton } from "@/components/openapi/ExpandButton"
 
 type Props = {
   name: string
   schema: ArraySchemaObject | ReferenceObject
-  required?: boolean
+  required: boolean
   doc: OpenApiDoc
 }
 
@@ -47,22 +46,11 @@ export const ArrayPropertyView: React.FC<Props> = ({
   return (
     <>
       <li className={styles.listItem}>
-        <div>
-          <pre className={styles.key}>
-            <button
-              className={clsx(styles.expandButton)}
-              onClick={toggleExpanded}
-            >
-              {name}
-              <ChevronRightIcon
-                fontSize={20}
-                className={clsx(styles.expandIcon, expanded && styles.expanded)}
-                fontWeight="700"
-              />
-            </button>
-          </pre>
-          {required && <Required />}
-        </div>
+        <KeyView required={required}>
+          <ExpandButton expanded={expanded} expand={toggleExpanded}>
+            {name}
+          </ExpandButton>
+        </KeyView>
         <div className={styles.value}>
           <pre className={styles.pre}>array {refName && `[${refName}]`}</pre>
           {!expanded && <hr className={styles.separator} />}

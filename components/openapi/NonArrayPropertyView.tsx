@@ -7,6 +7,7 @@ import { ExampleView } from "@/components/openapi/ExampleView"
 import styles from "./PropertyView.module.css"
 
 import NonArraySchemaObject = OpenAPIV3_1.NonArraySchemaObject
+import { KeyView } from "@/components/openapi/KeyView"
 
 type StringRangeOptions = {
   minLength?: number
@@ -76,7 +77,7 @@ const renderRange = (schema: NonArraySchemaObject) => {
 type Props = {
   name: string
   schema: NonArraySchemaObject
-  required?: boolean
+  required: boolean
 }
 
 export const NonArrayPropertyView: React.FC<Props> = ({
@@ -86,10 +87,7 @@ export const NonArrayPropertyView: React.FC<Props> = ({
 }) => {
   return (
     <li className={styles.listItem}>
-      <div>
-        <pre className={styles.key}>{name}</pre>
-        {required && <Required />}
-      </div>
+      <KeyView required={required}>{name}</KeyView>
       <div className={styles.value}>
         <pre className={styles.pre}>
           {schema.type}

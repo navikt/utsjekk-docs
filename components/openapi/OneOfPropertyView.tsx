@@ -2,21 +2,21 @@ import { OpenAPIV3_1 } from "openapi-types"
 import { BodyShort } from "@navikt/ds-react"
 import { Tabs } from "nextra/components"
 
-import { isReferenceObject } from "@/lib/openapi/guards"
 import { getRefName, resolveRef } from "@/lib/openapi/util"
+import { isReferenceObject } from "@/lib/openapi/guards"
 import { OpenApiDoc } from "@/lib/openapi/types"
-import { Required } from "@/components/openapi/Required"
+import { KeyView } from "@/components/openapi/KeyView"
 import { ObjectView } from "@/components/openapi/ObjectView"
+
+import styles from "./PropertyView.module.css"
 
 import ReferenceObject = OpenAPIV3_1.ReferenceObject
 import SchemaObject = OpenAPIV3_1.SchemaObject
 
-import styles from "./PropertyView.module.css"
-
 type Props = {
   name: string
   properties: (ReferenceObject | SchemaObject)[]
-  required?: boolean
+  required: boolean
   doc: OpenApiDoc
 }
 
@@ -36,10 +36,7 @@ export const OneOfPropertyView: React.FC<Props> = ({
 
   return (
     <li className={styles.listItem}>
-      <div>
-        <pre className={styles.key}>{name}</pre>
-        {required && <Required />}
-      </div>
+      <KeyView required={required}>{name}</KeyView>
       <div className={styles.value}>
         <div className={styles.oneOfTabs}>
           <BodyShort>En av:</BodyShort>

@@ -48,26 +48,8 @@
   height: calc(21px / 2 + var(--vertical-spacing));
 }
 
-.key {
-  font-size: var(--a-font-size-small);
-  width: 300px;
-}
-
 .pre {
   font-size: var(--a-font-size-small);
-}
-
-.expandButton {
-  display: flex;
-  align-items: center;
-}
-
-.expandIcon {
-  transition: all 0.2s ease;
-}
-
-.expandIcon.expanded {
-  transform: rotate(90deg);
 }
 
 .value {
@@ -98,10 +80,6 @@
 .expandedContent {
   padding: var(--a-spacing-4);
   padding-left: var(--a-spacing-6);
-  background: light-dark(
-      var(--a-surface-subtle),
-      var(--a-surface-active)
-  );
 }
 
 .expandedContent:not(:last-child) {
