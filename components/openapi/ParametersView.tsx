@@ -38,7 +38,7 @@ export const ParametersView: React.FC<Props> = ({ parameters, doc }) => {
             key={parameter.name}
             name={parameter.name}
             schema={schema}
-            required={parameter.required}
+            required={parameter.required ?? false}
           />
         )
       })}

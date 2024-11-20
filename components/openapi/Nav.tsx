@@ -60,6 +60,7 @@ export const Nav: React.FC<Props> = ({ doc }) => {
 
                     return (
                       <a
+                        key={`${method}-${pathItem.operationId}`}
                         className={styles.link}
                         href={`#${pathItem.operationId}`}
                       >
