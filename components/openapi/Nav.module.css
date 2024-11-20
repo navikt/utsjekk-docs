@@ -1,0 +1,16 @@
+.nav {
+  margin-right: var(--a-spacing-12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-spacing-4);
+  position: sticky;
+  top: var(--a-spacing-24);
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  color: var(--a-text-default);
+  gap: var(--a-spacing-3);
+  font-size: var(--a-font-size-small);
+}

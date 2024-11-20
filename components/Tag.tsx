@@ -6,11 +6,17 @@ import styles from "./Tag.module.css"
 
 type Props = ComponentProps<typeof Callout> & {
   className?: string
+  size?: "small" | "medium"
 }
 
-export const Tag: React.FC<Props> = ({ className, children, ...rest }) => {
+export const Tag: React.FC<Props> = ({
+  className,
+  children,
+  size = "small",
+  ...rest
+}) => {
   return (
-    <span className={clsx(styles.tag, className)}>
+    <span className={clsx(styles.tag, styles[size], className)}>
       <Callout {...rest}>{children}</Callout>
     </span>
   )

@@ -74,8 +74,6 @@ const ExpandableResponseView: React.FC<Props> = ({
               ? (resolveRef(schema.schema.$ref, doc) as SchemaObject)
               : (schema.schema as SchemaObject)
 
-            console.log(schemaObject)
-
             return (
               <div key={mediaType}>
                 <Detail className={styles.mediaType}>{mediaType}</Detail>
