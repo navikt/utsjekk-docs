@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002F_meta","\u002Fapi_spesifikasjon","\u002Fkom_i_gang\u002F_meta","\u002Fkom_i_gang\u002Futbetaling\u002F_meta","\u002Fkom_i_gang\u002Futbetaling\u002Fdata_inn\u002F_meta"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()
