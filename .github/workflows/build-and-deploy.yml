@@ -4,10 +4,6 @@ on:
   push:
     branches: [main]
 
-env:
-  NPM_TOKEN: ${{ secrets.READER_TOKEN }}
-  NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,6 +20,8 @@ jobs:
           registry-url: "https://npm.pkg.github.com"
 
       - name: Install
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
         run: npm ci
 
       - name: Build
