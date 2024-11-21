@@ -1,12 +1,17 @@
-import { OpenApiDoc } from "@/lib/openapi/types"
-import { ComponentProps, Fragment } from "react"
+import {
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
 import { Callout } from "nextra/components"
-import { OpenAPIV3_1 } from "openapi-types"
+
+import { Tag } from "@/components/Tag"
+import { OpenApiDoc } from "@/lib/openapi/types"
 
 import styles from "./Nav.module.css"
-import OperationObject = OpenAPIV3_1.OperationObject
-import { Tag } from "@/components/Tag"
-import clsx from "clsx"
 
 enum Method {
   Get = "get",
@@ -37,43 +42,109 @@ const calloutTypeForMethod = (
   }
 }
 
+type Section = {
+  method: Method
+  path: string
+  operationId: string
+  summary?: string
+}
+
+const getSections = (paths: Required<OpenApiDoc>["paths"]): Section[] =>
+  Object.entries(paths)
+    .filter(([_, pathObject]) => !!pathObject)
+    .flatMap(([path, pathObject]) =>
+      Object.values(Method)
+        .filter((method) => Object.hasOwn(pathObject!, method))
+        .map((method) => ({
+          method: method,
+          path: path,
+          operationId: pathObject![method]!.operationId!,
+          summary: pathObject![method]!.summary,
+        })),
+    )
+
+const useActivateWhenInViewport = (
+  elementsToScroll: HTMLElement[],
+  elementsToActivate: Record<string, HTMLElement>,
+  verticalOffset = 100,
+  activeClass = "active",
+) => {
+  useEffect(() => {
+    const scrollHandler = (event: Event) => {
+      const window = event.currentTarget as Window
+      const activationThreshold = window.scrollY + verticalOffset
+      const isScrolledToBottom =
+        window.scrollY + window.innerHeight ===
+        document.documentElement.offsetHeight
+
+      // If we've scrolled to the bottom we need to activate the last element. Otherwise, we won't be able to activate
+      // elements that are placed so far down the document that they never cross the activation threshold.
+      const activeElement = isScrolledToBottom
+        ? elementsToScroll.slice(-1).pop()!
+        : (elementsToScroll.findLast(
+            (element) => element.offsetTop < activationThreshold,
+          ) ?? elementsToScroll[0])
+
+      for (const element of elementsToScroll) {
+        if (element.id !== activeElement.id) {
+          elementsToActivate[element.id].classList.remove(activeClass)
+        }
+      }
+
+      elementsToActivate[activeElement.id].classList.add(activeClass)
+    }
+
+    window.addEventListener("scroll", scrollHandler)
+
+    return () => {
+      window.removeEventListener("scroll", scrollHandler)
+    }
+  }, [elementsToScroll, elementsToActivate, verticalOffset, activeClass])
+}
+
 type Props = {
   doc: OpenApiDoc
 }
 
 export const Nav: React.FC<Props> = ({ doc }) => {
+  const sections =
+    useMemo(() => doc.paths && getSections(doc.paths), [doc]) ?? []
+
+  const elements = useRef<Record<string, HTMLElement>>({})
+  const [sectionElements, setSectionElements] = useState<HTMLElement[]>([])
+
+  useEffect(() => {
+    setSectionElements(
+      sections
+        .map((section) => document.getElementById(section.operationId))
+        .filter((it) => it !== null),
+    )
+  }, [sections])
+
+  useActivateWhenInViewport(sectionElements, elements.current)
+
+  const updateRef = useCallback(
+    (section: Section) => (el: HTMLElement | null) =>
+      el && (elements.current[section.operationId] = el),
+    [elements],
+  )
+
   return (
     <div>
       <nav className={styles.nav}>
-        {doc.paths &&
-          Object.entries(doc.paths).map(([path, pathObject]) => {
-            if (!pathObject) {
-              return null
-            }
-
-            return (
-              <Fragment key={path}>
-                {Object.values(Method)
-                  .filter((method) => Object.hasOwn(pathObject, method))
-                  .map((method) => {
-                    const pathItem = pathObject[method] as OperationObject
-
-                    return (
-                      <a
-                        key={`${method}-${pathItem.operationId}`}
-                        className={styles.link}
-                        href={`#${pathItem.operationId}`}
-                      >
-                        <Tag size="small" type={calloutTypeForMethod(method)}>
-                          {method}
-                        </Tag>
-                        {pathItem.summary}
-                      </a>
-                    )
-                  })}
-              </Fragment>
-            )
-          })}
+        {sections.map((section) => (
+          <a
+            key={`${section.method}-${section.operationId}`}
+            className={styles.link}
+            href={`#${section.operationId}`}
+            ref={updateRef(section)}
+          >
+            <Tag size="small" type={calloutTypeForMethod(section.method)}>
+              {section.method}
+            </Tag>
+            {section.summary}
+          </a>
+        ))}
       </nav>
     </div>
   )
