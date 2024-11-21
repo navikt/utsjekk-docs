@@ -6,6 +6,7 @@ on:
 
 env:
   NPM_TOKEN: ${{ secrets.READER_TOKEN }}
+  NPM_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
 
 jobs:
   build:
