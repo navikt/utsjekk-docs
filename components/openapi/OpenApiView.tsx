@@ -74,8 +74,12 @@ export const OpenApiView: React.FC = () => {
                           size="medium"
                         >
                           {pathItem.summary}
+                          <a
+                            id={pathItem.operationId}
+                            className={styles.scrollAnchor}
+                          />
                         </Heading>
-                        <div id={pathItem.operationId} className={styles.path}>
+                        <div className={styles.path}>
                           <Tag
                             className={styles.method}
                             type={calloutTypeForMethod(method)}
