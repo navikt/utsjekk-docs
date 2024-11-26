@@ -6,7 +6,7 @@ import styles from "./Tag.module.css"
 
 type Props = ComponentProps<typeof Callout> & {
   className?: string
-  size?: "small" | "medium"
+  size?: "xsmall" | "small" | "medium"
 }
 
 export const Tag: React.FC<Props> = ({

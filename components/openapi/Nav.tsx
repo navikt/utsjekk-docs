@@ -139,7 +139,11 @@ export const Nav: React.FC<Props> = ({ doc }) => {
             href={`#${section.operationId}`}
             ref={updateRef(section)}
           >
-            <Tag size="small" type={calloutTypeForMethod(section.method)}>
+            <Tag
+              className={styles.tag}
+              size="xsmall"
+              type={calloutTypeForMethod(section.method)}
+            >
               {section.method}
             </Tag>
             {section.summary}

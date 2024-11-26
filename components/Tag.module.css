@@ -2,6 +2,15 @@
   height: max-content;
 }
 
+.tag.xsmall {
+  --tag-padding: var(--a-spacing-0) var(--a-spacing-1);
+  font-size: var(--a-font-size-small);
+}
+
+.tag.xsmall > div {
+  border-radius: var(--a-border-radius-medium);
+}
+
 .tag.small {
   --tag-padding: var(--a-spacing-1) var(--a-spacing-2);
   font-size: var(--a-font-size-small);
