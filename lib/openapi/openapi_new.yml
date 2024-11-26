@@ -1,0 +1,685 @@
+openapi: 3.1.1
+info:
+  version: "1"
+  title: Nytt API for iverksetting av utbetaling
+servers:
+  - url: https://utsjekk.intern.nav.no
+    description: Generated server url
+security:
+  - Bearer:
+      - read
+      - write
+paths:
+  "/utbetalinger/{uid}":
+    post:
+      tags:
+        - Utbetaling
+      summary: Send utbetaling
+      description: Iverksetter utbetalingen mot Oppdragssystemet.
+      operationId: iverksett_utbetaling
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: ID til utbetalingen. Sendes ikke til OS/UR.
+            example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UtbetalingApi"
+        required: true
+      responses:
+        '201':
+          description: Utbetalingen er mottatt
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: Path kan bruke for CRUD-operasjoner på utbetalingen.
+        '400':
+          description: Ugyldig format på utbetalingen
+        '403':
+          description: Ikke autorisert til å iverksette utbetaling
+        '409':
+          description: Utbetalingen er i konflikt med tidligere utbetaling
+    put:
+      tags:
+        - Utbetaling
+      summary: Endre utbetaling
+      description: Endrer en eksisterende utbetaling.
+      operationId: endre_utbetaling
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: ID til utbetalingen. Sendes ikke til OS/UR.
+            example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UtbetalingApi"
+        required: true
+      responses:
+        '204':
+          description: Endret utbetaling er mottatt
+        '400':
+          description: Ugyldig format på utbetalingen
+        '403':
+          description: Ikke autorisert til å iverksette utbetaling
+        '404':
+          description: Utbetalingen finnes ikke
+        '409':
+          description: Utbetalingen er i konflikt med tidligere utbetaling
+    get:
+      tags:
+        - Utbetaling
+      summary: Hent utbetaling
+      description: Henter utbetalingen slik den ser ut i Utsjekk.
+      operationId: hent_utbetaling
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: ID til utbetalingen. Sendes ikke til OS/UR.
+            example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
+      responses:
+        '200':
+          description: Fant utbetalingen
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/UtbetalingApi"
+        '400':
+          description: Ugyldig format på uid-parameter
+        '404':
+          description: Fant ikke utbetalingen
+    delete:
+      tags:
+        - Utbetaling
+      summary: Annullér utbetaling
+      description: Annullerer en utbetaling mot Oppdragssystemet.
+      operationId: annuller_utbetaling
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: ID til utbetalingen. Sendes ikke til OS/UR.
+            example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
+      responses:
+        '204':
+          description: Annullerte utbetalingen
+        '400':
+          description: Ugyldig format på uid-parameter
+        '404':
+          description: Fant ikke utbetalingen
+
+  "/utbetalinger/{uid}/status":
+    get:
+      tags:
+        - Utbetaling
+      summary: Hent status på utbetaling
+      description: Henter status på utbetalingen.
+      operationId: hent_utbetalingstatus
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: ID til utbetalingen. Sendes ikke til OS/UR.
+            example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
+      responses:
+        '200':
+          description: Hentet status for utbetalingen
+          content:
+            application/json:
+              schema:
+                required:
+                  - status
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - SENDT_TIL_OPPDRAG
+                      - FEILET_MOT_OPPDRAG
+                      - OK
+                      - IKKE_PÅBEGYNT
+                      - OK_UTEN_UTBETALING
+        '400':
+          description: Ugyldig format på uid-parameter
+        '404':
+          description: Fant ikke utbetalingen
+
+  "/simuleringer/{uid}":
+    post:
+      tags:
+        - Simulering
+      summary: Simuler utbetaling
+      description: Simulerer utbetalingen mot Oppdragssystemet.
+      operationId: simuler_utbetaling
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: ID til simuleringen. Sendes ikke til OS/UR.
+            example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UtbetalingApi"
+        required: true
+      responses:
+        '200':
+          description: Simulering utført ok
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/SimuleringApiRespons"
+        '400':
+          description: Ugyldig format på utbetalingen
+        '403':
+          description: Ikke autorisert til å iverksette utbetaling
+        '409':
+          description: Utbetalingen er i konflikt med tidligere utbetaling
+  "/api/iverksetting/{sakId}/{behandlingId}/{iverksettingId}/status":
+    get:
+      tags:
+        - Iverksetting
+      summary: Sjekk status på utbetaling
+      description: Sjekk status på utbetaling med gitt behandlingId og iverksettingId
+      operationId: hentStatus
+      parameters:
+        - name: sakId
+          in: path
+          required: true
+          schema:
+            type: string
+            maxLength: 25
+            minLength: 1
+            description: På grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
+              på 25 tegn for sakId
+        - name: behandlingId
+          in: path
+          required: true
+          schema:
+            type: string
+            maxLength: 30
+            minLength: 1
+            description: På grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
+              på 30 tegn for behandlingId
+        - name: iverksettingId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description:
+              Id på iverksettingen. Brukes kun når vedtaksløsningen må iverksette flere ganger for samme behandling/vedtak.
+      responses:
+        '200':
+          description: Sjekket status OK
+          content:
+            application/json:
+              schema:
+                type: string
+                enum:
+                  - SENDT_TIL_OPPDRAG
+                  - FEILET_MOT_OPPDRAG
+                  - OK
+                  - IKKE_PÅBEGYNT
+                  - OK_UTEN_UTBETALING
+        '404':
+          description: Kunne ikke finne utbetaling
+  "/api/iverksetting/{sakId}/{behandlingId}/status":
+    get:
+      tags:
+        - Iverksetting
+      summary: Sjekk status på utbetaling
+      description: Sjekk status paa iverksetting med gitt behandlingId
+      operationId: hentStatus_1
+      parameters:
+        - name: sakId
+          in: path
+          required: true
+          schema:
+            type: string
+            maxLength: 25
+            minLength: 1
+            description: På grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
+              på 25 tegn for sakId
+        - name: behandlingId
+          in: path
+          required: true
+          schema:
+            type: string
+            maxLength: 30
+            minLength: 1
+            description: På grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
+              på 30 tegn for behandlingId
+      responses:
+        '200':
+          description: Sjekket status OK
+          content:
+            application/json:
+              schema:
+                type: string
+                enum:
+                  - SENDT_TIL_OPPDRAG
+                  - FEILET_MOT_OPPDRAG
+                  - OK
+                  - IKKE_PÅBEGYNT
+                  - OK_UTEN_UTBETALING
+        '404':
+          description: Kunne ikke finne utbetaling
+components:
+  schemas:
+    UtbetalingApi:
+      required:
+        - sakId
+        - behandlingId
+        - personident
+        - vedtakstidspunkt
+        - stønad
+        - beslutterId
+        - saksbehandlerId
+        - perioder
+      properties:
+        sakId:
+          type: string
+          maxLength: 25
+          minLength: 1
+          description: Id på saken i vedtaksløsningen.
+          example: 'ASD123NLDQ23'
+        behandlingId:
+          type: string
+          maxLength: 30
+          minLength: 1
+          description:
+            Id på behandlingen i vedtaksløsningen. Brukes for å spore utbetalingen tilbake til den
+            konkrete hendelsen som trigget den. Kan også være id på vedtak, meldekort etc. DVH bruker denne når de
+            sammenstiller stønadsstatistikk.
+          example: 'ADNLK123lDLJNWQ1'
+        personident:
+          type: string
+          maxLength: 11
+          minLength: 11
+          description: Fødselsnummer eller D-nummer
+          example: '15507600333'
+        vedtakstidspunkt:
+          type: string
+          format: date-time
+          description: Tidspunkt vedtaket ble fattet. Bruker ISO 8601-format.
+          example: '2024-11-26T09:34:10.912Z'
+        stønad:
+          type: string
+          description: Stønadstypen som gjelder for utbetalingen
+          example: 'ARBEIDSSØKER_ORDINÆR'
+          enum:
+            # Dagpenger
+            - ARBEIDSSØKER_ORDINÆR
+            - PERMITTERING_ORDINÆR
+            - PERMITTERING_FISKEINDUSTRI
+            - EØS
+            - ARBEIDSSØKER_ORDINÆR_FERIETILLEGG
+            - PERMITTERING_ORDINÆR_FERIETILLEGG
+            - PERMITTERING_FISKEINDUSTRI_FERIETILLEGG
+            - EØS_FERIETILLEGG
+            - ARBEIDSSØKER_ORDINÆR_FERIETILLEGG_AVDØD
+            - PERMITTERING_ORDINÆR_FERIETILLEGG_AVDØD
+            - PERMITTERING_FISKEINDUSTRI_FERIETILLEGG_AVDØD
+            - EØS_FERIETILLEGG_AVDØD
+            # Tiltakspenger
+            - ARBEIDSFORBEREDENDE_TRENING
+            - ARBEIDSRETTET_REHABILITERING
+            - ARBEIDSTRENING
+            - AVKLARING
+            - DIGITAL_JOBBKLUBB
+            - ENKELTPLASS_AMO
+            - ENKELTPLASS_VGS_OG_HØYERE_YRKESFAG
+            - FORSØK_OPPLÆRING_LENGRE_VARIGHET
+            - GRUPPE_AMO
+            - GRUPPE_VGS_OG_HØYERE_YRKESFAG
+            - HØYERE_UTDANNING
+            - INDIVIDUELL_JOBBSTØTTE
+            - INDIVIDUELL_KARRIERESTØTTE_UNG
+            - JOBBKLUBB
+            - OPPFØLGING
+            - UTVIDET_OPPFØLGING_I_NAV
+            - UTVIDET_OPPFØLGING_I_OPPLÆRING
+            # Tilleggsstønader
+            - TILSYN_BARN_ENSLIG_FORSØRGER
+            - TILSYN_BARN_AAP
+            - TILSYN_BARN_ETTERLATTE
+            - LÆREMIDLER_ENSLIG_FORSØRGER
+            - LÆREMIDLER_AAP
+            - LÆREMIDLER_ETTERLATTE
+            - TILSYN_BARN_ENSLIG_FORSØRGER_BARNETILLEGG
+            - TILSYN_BARN_AAP_BARNETILLEGG
+            - TILSYN_BARN_ETTERLATTE_BARNETILLEGG
+            - LÆREMIDLER_ENSLIG_FORSØRGER_BARNETILLEGG
+            - LÆREMIDLER_AAP_BARNETILLEGG
+            - LÆREMIDLER_ETTERLATTE_BARNETILLEGG
+        beslutterId:
+          type: string
+          description:
+            Enten NAV-ident på beslutter når behandlingen er gjort manuelt, eller navn på
+            system/applikasjon/servicebruker dersom behandlingen er gjort automatisk. Utsjekk gjør ingen validering av
+            dette feltet.
+          example: 'Z123456'
+        saksbehandlerId:
+          type: string
+          description:
+            Enten NAV-ident på saksbehandler når behandlingen er gjort manuelt, eller navn på
+            system/applikasjon/servicebruker dersom behandlingen er gjort automatisk. Utsjekk gjør ingen validering av
+            dette feltet.
+          example: 'A234567'
+        perioder:
+          type: array
+          items:
+            "$ref": "#/components/schemas/UtbetalingsperiodeApi"
+
+    UtbetalingsperiodeApi:
+      required:
+        - fom
+        - tom
+        - beløp
+      properties:
+        fom:
+          type: string
+          format: date
+          description: Den første datoen utbetalingen gjelder for. Bruker ISO 8601-format.
+          example: '2024-10-01'
+        tom:
+          type: string
+          format: date
+          description: Den siste datoen utbetalingen gjelder for. Bruker ISO 8601-format.
+          example: '2024-10-31'
+        beløp:
+          type: integer
+          minimum: 0
+          description: Beløpet som skal utbetales for perioden.
+          example: 1234
+        betalendeEnhet:
+          type: string
+          pattern: '\d{4}'
+          description: Brukes hvis budsjettet til et lokalkontor skal brukes i beregningene.
+          example: "1234"
+        fastsattDagpengesats:
+          type: integer
+          minimum: 0
+          description: Brukes for skatteberegning av dagpenger.
+          example: 200
+
+    SimuleringApi:
+      required:
+        - sakId
+        - behandlingId
+        - personident
+        - stønad
+        - saksbehandlerId
+        - perioder
+      properties:
+        sakId:
+          type: string
+          maxLength: 25
+          minLength: 1
+          description: Id på saken i vedtaksløsningen.
+          example: 'ASD123NLDQ23'
+        behandlingId:
+          type: string
+          maxLength: 30
+          minLength: 1
+          description:
+            Id på behandlingen i vedtaksløsningen. Brukes for å spore utbetalingen tilbake til den
+            konkrete hendelsen som trigget den. Kan også være id på vedtak, meldekort etc. DVH bruker denne når de
+            sammenstiller stønadsstatistikk.
+          example: 'ADNLK123lDLJNWQ1'
+        personident:
+          type: string
+          maxLength: 11
+          minLength: 11
+          description: Fødselsnummer eller D-nummer
+          example: '15507600333'
+        stønad:
+          type: string
+          description: Stønadstypen som gjelder for utbetalingen
+          example: 'ARBEIDSSØKER_ORDINÆR'
+          enum:
+            # Dagpenger
+            - ARBEIDSSØKER_ORDINÆR
+            - PERMITTERING_ORDINÆR
+            - PERMITTERING_FISKEINDUSTRI
+            - EØS
+            - ARBEIDSSØKER_ORDINÆR_FERIETILLEGG
+            - PERMITTERING_ORDINÆR_FERIETILLEGG
+            - PERMITTERING_FISKEINDUSTRI_FERIETILLEGG
+            - EØS_FERIETILLEGG
+            - ARBEIDSSØKER_ORDINÆR_FERIETILLEGG_AVDØD
+            - PERMITTERING_ORDINÆR_FERIETILLEGG_AVDØD
+            - PERMITTERING_FISKEINDUSTRI_FERIETILLEGG_AVDØD
+            - EØS_FERIETILLEGG_AVDØD
+            # Tiltakspenger
+            - ARBEIDSFORBEREDENDE_TRENING
+            - ARBEIDSRETTET_REHABILITERING
+            - ARBEIDSTRENING
+            - AVKLARING
+            - DIGITAL_JOBBKLUBB
+            - ENKELTPLASS_AMO
+            - ENKELTPLASS_VGS_OG_HØYERE_YRKESFAG
+            - FORSØK_OPPLÆRING_LENGRE_VARIGHET
+            - GRUPPE_AMO
+            - GRUPPE_VGS_OG_HØYERE_YRKESFAG
+            - HØYERE_UTDANNING
+            - INDIVIDUELL_JOBBSTØTTE
+            - INDIVIDUELL_KARRIERESTØTTE_UNG
+            - JOBBKLUBB
+            - OPPFØLGING
+            - UTVIDET_OPPFØLGING_I_NAV
+            - UTVIDET_OPPFØLGING_I_OPPLÆRING
+            # Tilleggsstønader
+            - TILSYN_BARN_ENSLIG_FORSØRGER
+            - TILSYN_BARN_AAP
+            - TILSYN_BARN_ETTERLATTE
+            - LÆREMIDLER_ENSLIG_FORSØRGER
+            - LÆREMIDLER_AAP
+            - LÆREMIDLER_ETTERLATTE
+            - TILSYN_BARN_ENSLIG_FORSØRGER_BARNETILLEGG
+            - TILSYN_BARN_AAP_BARNETILLEGG
+            - TILSYN_BARN_ETTERLATTE_BARNETILLEGG
+            - LÆREMIDLER_ENSLIG_FORSØRGER_BARNETILLEGG
+            - LÆREMIDLER_AAP_BARNETILLEGG
+            - LÆREMIDLER_ETTERLATTE_BARNETILLEGG
+        saksbehandlerId:
+          type: string
+          description:
+            Enten NAV-ident på saksbehandler når behandlingen er gjort manuelt, eller navn på
+            system/applikasjon/servicebruker dersom behandlingen er gjort automatisk. Utsjekk gjør ingen validering av
+            dette feltet.
+          example: 'A234567'
+        perioder:
+          type: array
+          items:
+            "$ref": "#/components/schemas/UtbetalingsperiodeApi"
+
+    SimuleringApiRespons:
+      required:
+        - oppsummeringer
+        - detaljer
+      type: object
+      properties:
+        oppsummeringer:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OppsummeringForPeriode"
+        detaljer:
+          "$ref":
+            "#/components/schemas/SimuleringDetaljer"
+
+    SimuleringDetaljer:
+      required:
+        - gjelderId
+        - datoBeregnet
+        - totalBeløp
+        - perioder
+      type: object
+      properties:
+        gjelderId:
+          type: string
+          description: Personident eller organisasjon som det simuleres på vegne av.
+        datoBeregnet:
+          type: string
+          format: date
+          description: Dato beregningen ble foretatt
+          example: "2024-11-01"
+        totalBeløp:
+          type: integer
+          description: Det totale beløpet som ble simulert i kroner.
+          example: 3020
+        perioder:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Periode"
+
+    Periode:
+      required:
+        - fom
+        - tom
+        - posteringer
+      type: object
+      properties:
+        fom:
+          type: string
+          format: date
+          description: Startdato for perioden. Bruker ISO 8601-format.
+          example: "2024-10-01"
+        tom:
+          type: string
+          format: date
+          description: Sluttdato for perioden. Bruker ISO 8601-format.
+          example: "2024-10-31"
+        posteringer:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Postering"
+
+    Postering:
+      required:
+        - fagområde
+        - sakId
+        - fom
+        - tom
+        - beløp
+        - type
+        - klassekode
+      type: object
+      properties:
+        fagområde:
+          type: string
+          enum:
+            - TILLEGGSSTØNADER
+            - TILLEGGSSTØNADER_ARENA
+            - TILLEGGSSTØNADER_ARENA_MANUELL_POSTERING
+            - DAGPENGER
+            - DAGPENGER_MANUELL_POSTERING
+            - DAGPENGER_ARENA
+            - DAGPENGER_ARENA_MANUELL_POSTERING
+            - TILTAKSPENGER
+            - TILTAKSPENGER_ARENA
+            - TILTAKSPENGER_ARENA_MANUELL_POSTERING
+          example: 'TILLEGGSSTØNADER'
+        sakId:
+          type: string
+          maxLength: 25
+          minLength: 1
+          description: Id på saken i vedtaksløsningen.
+          example: 'ASD123NLDQ23'
+        fom:
+          type: string
+          format: date
+          description: Startdato for posteringen. Bruker ISO 8601-format.
+          example: "2024-10-01"
+        tom:
+          type: string
+          format: date
+          description: Sluttdato for posteringen. Bruker ISO 8601-format.
+          example: "2024-10-31"
+        beløp:
+          type: integer
+          description: Gjeldende beløp for posteringen i kroner.
+          example: 123
+        type:
+          type: string
+          enum:
+            - YTELSE
+            - FEILUTBETALING
+            - FORSKUDSSKATT
+            - JUSTERING
+            - TREKK
+            - MOTPOSTERING
+          example: 'YTELSE'
+        klassekode:
+          type: string
+          description: Koden for stønadstypen som brukes internt i OS/UR.
+          example: 'TSTBASISP4-OP'
+
+    OppsummeringForPeriode:
+      required:
+        - fom
+        - tom
+        - tidligereUtbetalt
+        - nyUtbetaling
+        - totalEtterbetaling
+        - totalFeilutbetaling
+      type: object
+      properties:
+        fom:
+          type: string
+          format: date
+          example: "2024-10-01"
+        tom:
+          type: string
+          format: date
+          example: "2024-10-31"
+        tidligereUtbetalt:
+          type: integer
+          description: Beløp som tidligere er utbetalt i hele kroner.
+          example: 1000
+        nyUtbetaling:
+          type: integer
+          description: Ny utbetaling i hele kroner.
+          example: 1000
+        totalEtterbetaling:
+          type: integer
+          description: Beløp som skal etterbetales i hele kroner.
+          example: 1000
+        totalFeilutbetaling:
+          type: integer
+          description: Beløp som er feilutbetalt i hele kroner.
+          example: 1000
+
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      name: Authorization
+      in: header
