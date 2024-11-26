@@ -24,8 +24,8 @@ paths:
           schema:
             type: string
             format: uuid
-            description: ID til utbetalingen. Sendes ikke til OS/UR.
-            example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
+          description: ID til utbetalingen. Sendes ikke til OS/UR.
+          example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
       requestBody:
         content:
           application/json:
@@ -60,8 +60,8 @@ paths:
           schema:
             type: string
             format: uuid
-            description: ID til utbetalingen. Sendes ikke til OS/UR.
-            example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
+          description: ID til utbetalingen. Sendes ikke til OS/UR.
+          example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
       requestBody:
         content:
           application/json:
@@ -92,8 +92,8 @@ paths:
           schema:
             type: string
             format: uuid
-            description: ID til utbetalingen. Sendes ikke til OS/UR.
-            example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
+          description: ID til utbetalingen. Sendes ikke til OS/UR.
+          example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
       responses:
         '200':
           description: Fant utbetalingen
@@ -118,8 +118,8 @@ paths:
           schema:
             type: string
             format: uuid
-            description: ID til utbetalingen. Sendes ikke til OS/UR.
-            example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
+          description: ID til utbetalingen. Sendes ikke til OS/UR.
+          example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
       responses:
         '204':
           description: Annullerte utbetalingen
@@ -142,8 +142,8 @@ paths:
           schema:
             type: string
             format: uuid
-            description: ID til utbetalingen. Sendes ikke til OS/UR.
-            example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
+          description: ID til utbetalingen. Sendes ikke til OS/UR.
+          example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
       responses:
         '200':
           description: Hentet status for utbetalingen
@@ -181,8 +181,8 @@ paths:
           schema:
             type: string
             format: uuid
-            description: ID til simuleringen. Sendes ikke til OS/UR.
-            example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
+          description: ID til simuleringen. Sendes ikke til OS/UR.
+          example: '7832faed-2140-4884-9e5c-5ab434e57fbb'
       requestBody:
         content:
           application/json:
@@ -202,99 +202,10 @@ paths:
           description: Ikke autorisert til å iverksette utbetaling
         '409':
           description: Utbetalingen er i konflikt med tidligere utbetaling
-  "/api/iverksetting/{sakId}/{behandlingId}/{iverksettingId}/status":
-    get:
-      tags:
-        - Iverksetting
-      summary: Sjekk status på utbetaling
-      description: Sjekk status på utbetaling med gitt behandlingId og iverksettingId
-      operationId: hentStatus
-      parameters:
-        - name: sakId
-          in: path
-          required: true
-          schema:
-            type: string
-            maxLength: 25
-            minLength: 1
-            description: På grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
-              på 25 tegn for sakId
-        - name: behandlingId
-          in: path
-          required: true
-          schema:
-            type: string
-            maxLength: 30
-            minLength: 1
-            description: På grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
-              på 30 tegn for behandlingId
-        - name: iverksettingId
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-            description:
-              Id på iverksettingen. Brukes kun når vedtaksløsningen må iverksette flere ganger for samme behandling/vedtak.
-      responses:
-        '200':
-          description: Sjekket status OK
-          content:
-            application/json:
-              schema:
-                type: string
-                enum:
-                  - SENDT_TIL_OPPDRAG
-                  - FEILET_MOT_OPPDRAG
-                  - OK
-                  - IKKE_PÅBEGYNT
-                  - OK_UTEN_UTBETALING
-        '404':
-          description: Kunne ikke finne utbetaling
-  "/api/iverksetting/{sakId}/{behandlingId}/status":
-    get:
-      tags:
-        - Iverksetting
-      summary: Sjekk status på utbetaling
-      description: Sjekk status paa iverksetting med gitt behandlingId
-      operationId: hentStatus_1
-      parameters:
-        - name: sakId
-          in: path
-          required: true
-          schema:
-            type: string
-            maxLength: 25
-            minLength: 1
-            description: På grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
-              på 25 tegn for sakId
-        - name: behandlingId
-          in: path
-          required: true
-          schema:
-            type: string
-            maxLength: 30
-            minLength: 1
-            description: På grunn av tekniske begrensninger hos OS/UR er det en lengdebegrensning
-              på 30 tegn for behandlingId
-      responses:
-        '200':
-          description: Sjekket status OK
-          content:
-            application/json:
-              schema:
-                type: string
-                enum:
-                  - SENDT_TIL_OPPDRAG
-                  - FEILET_MOT_OPPDRAG
-                  - OK
-                  - IKKE_PÅBEGYNT
-                  - OK_UTEN_UTBETALING
-        '404':
-          description: Kunne ikke finne utbetaling
 components:
   schemas:
     UtbetalingApi:
+      type: object
       required:
         - sakId
         - behandlingId
@@ -400,6 +311,7 @@ components:
             "$ref": "#/components/schemas/UtbetalingsperiodeApi"
 
     UtbetalingsperiodeApi:
+      type: object
       required:
         - fom
         - tom
@@ -432,6 +344,7 @@ components:
           example: 200
 
     SimuleringApi:
+      type: object
       required:
         - sakId
         - behandlingId
@@ -523,10 +436,10 @@ components:
             "$ref": "#/components/schemas/UtbetalingsperiodeApi"
 
     SimuleringApiRespons:
+      type: object
       required:
         - oppsummeringer
         - detaljer
-      type: object
       properties:
         oppsummeringer:
           type: array
@@ -537,12 +450,12 @@ components:
             "#/components/schemas/SimuleringDetaljer"
 
     SimuleringDetaljer:
+      type: object
       required:
         - gjelderId
         - datoBeregnet
         - totalBeløp
         - perioder
-      type: object
       properties:
         gjelderId:
           type: string
@@ -562,11 +475,11 @@ components:
             "$ref": "#/components/schemas/Periode"
 
     Periode:
+      type: object
       required:
         - fom
         - tom
         - posteringer
-      type: object
       properties:
         fom:
           type: string
@@ -584,6 +497,7 @@ components:
             "$ref": "#/components/schemas/Postering"
 
     Postering:
+      type: object
       required:
         - fagområde
         - sakId
@@ -592,7 +506,6 @@ components:
         - beløp
         - type
         - klassekode
-      type: object
       properties:
         fagområde:
           type: string
@@ -644,6 +557,7 @@ components:
           example: 'TSTBASISP4-OP'
 
     OppsummeringForPeriode:
+      type: object
       required:
         - fom
         - tom
@@ -651,7 +565,6 @@ components:
         - nyUtbetaling
         - totalEtterbetaling
         - totalFeilutbetaling
-      type: object
       properties:
         fom:
           type: string

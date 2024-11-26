@@ -5,7 +5,7 @@ import styles from "./KeyView.module.css"
 
 type Props = {
   children: ReactNode
-  required: boolean
+  required?: boolean
 }
 
 export const KeyView: React.FC<Props> = ({ children, required }) => {

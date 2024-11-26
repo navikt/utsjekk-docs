@@ -10,9 +10,9 @@ import { ResponsesView } from "@/components/openapi/ResponsesView"
 import { Nav } from "@/components/openapi/Nav"
 import { Tag } from "@/components/Tag"
 
-import OperationObject = OpenAPIV3_1.OperationObject
-
 import styles from "./OpenApiView.module.css"
+
+import OperationObject = OpenAPIV3_1.OperationObject
 
 enum Method {
   Get = "get",
@@ -44,7 +44,25 @@ const calloutTypeForMethod = (
 }
 
 export const OpenApiView: React.FC = () => {
-  const doc = useOpenApiDoc()
+  const doc = useOpenApiDoc("new")
+
+  const operations = doc.paths
+    ? Object.entries(doc.paths)
+        .filter(([_, pathObject]) => !!pathObject)
+        .flatMap(([path, pathObject]) =>
+          Object.values(Method)
+            .filter((method) => Object.hasOwn(pathObject!, method))
+            .map((method) => {
+              const pathItem = pathObject![method] as OperationObject
+              return {
+                id: pathItem.operationId,
+                path: path,
+                method: method,
+                ...pathItem,
+              }
+            }),
+        )
+    : []
 
   return (
     <div className={styles.container}>
@@ -53,73 +71,47 @@ export const OpenApiView: React.FC = () => {
         <Heading className={styles.title} level="1" size="large">
           {doc.info.title}
         </Heading>
-        {doc.paths &&
-          Object.entries(doc.paths).map(([path, pathObject]) => {
-            if (!pathObject) {
-              return null
-            }
-
-            return (
-              <div key={path}>
-                {Object.values(Method)
-                  .filter((method) => Object.hasOwn(pathObject, method))
-                  .map((method) => {
-                    const pathItem = pathObject[method] as OperationObject
-
-                    return (
-                      <div className={styles.operation} key={method}>
-                        <Heading
-                          className={styles.subTitle}
-                          level="2"
-                          size="medium"
-                        >
-                          {pathItem.summary}
-                          <a
-                            id={pathItem.operationId}
-                            className={styles.scrollAnchor}
-                          />
-                        </Heading>
-                        <div className={styles.path}>
-                          <Tag
-                            className={styles.method}
-                            type={calloutTypeForMethod(method)}
-                            emoji
-                          >
-                            {method}
-                          </Tag>
-                          <pre>{path}</pre>
-                          <a
-                            className={styles.operationAnchor}
-                            href={`#${pathItem.operationId}`}
-                          />
-                        </div>
-                        <BodyLong className={styles.description}>
-                          {pathItem.description}
-                        </BodyLong>
-                        {pathItem.parameters && (
-                          <ParametersView
-                            parameters={pathItem.parameters}
-                            doc={doc}
-                          />
-                        )}
-                        {pathItem.requestBody && (
-                          <RequestBodyView
-                            requestBody={pathItem.requestBody}
-                            doc={doc}
-                          />
-                        )}
-                        {pathItem.responses && (
-                          <ResponsesView
-                            responses={pathItem.responses}
-                            doc={doc}
-                          />
-                        )}
-                      </div>
-                    )
-                  })}
+        {operations.map((operation) => {
+          return (
+            <div className={styles.operation} key={operation.method}>
+              <Heading className={styles.subTitle} level="2" size="medium">
+                {operation.summary}
+                <a id={operation.id} className={styles.scrollAnchor} />
+              </Heading>
+              <div className={styles.path}>
+                <Tag
+                  className={styles.method}
+                  type={calloutTypeForMethod(operation.method)}
+                  emoji
+                >
+                  {operation.method}
+                </Tag>
+                <pre>{operation.path}</pre>
+                <a
+                  className={styles.operationAnchor}
+                  href={`#${operation.id}`}
+                />
               </div>
-            )
-          })}
+              {operation.description && (
+                <BodyLong className={styles.description}>
+                  {operation.description}
+                </BodyLong>
+              )}
+              {operation.parameters && (
+                <ParametersView parameters={operation.parameters} doc={doc} />
+              )}
+              {operation.requestBody && (
+                <RequestBodyView
+                  requestBody={operation.requestBody}
+                  doc={doc}
+                />
+              )}
+              {operation.responses && (
+                <ResponsesView responses={operation.responses} doc={doc} />
+              )}
+            </div>
+          )
+        })}
       </div>
     </div>
   )

@@ -24,7 +24,7 @@
 }
 
 /*Vertical line to the left*/
-.listItem:after {
+.listItem:not(:only-child):after {
   content: "";
   position: absolute;
   left: 0;
