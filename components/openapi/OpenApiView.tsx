@@ -3,7 +3,7 @@ import { OpenAPIV3_1 } from "openapi-types"
 import { Callout } from "nextra/components"
 import { BodyLong, Heading } from "@navikt/ds-react"
 
-import { useOpenApiDoc } from "@/lib/openapi/hooks"
+import { OpenApiSpecContext } from "@/lib/openapi/context"
 import { RequestBodyView } from "@/components/openapi/RequestBodyView"
 import { ParametersView } from "@/components/openapi/ParametersView"
 import { ResponsesView } from "@/components/openapi/ResponsesView"
@@ -13,7 +13,6 @@ import { Tag } from "@/components/Tag"
 import styles from "./OpenApiView.module.css"
 
 import OperationObject = OpenAPIV3_1.OperationObject
-import { OpenApiSpecContext } from "@/lib/openapi/context"
 
 enum Method {
   Get = "get",
@@ -68,7 +67,7 @@ export const OpenApiView: React.FC = () => {
   return (
     <div className={styles.container}>
       <Nav doc={currentDoc} />
-      <div>
+      <article className={styles.document}>
         <Heading className={styles.title} level="1" size="large">
           {currentDoc.info.title}
         </Heading>
@@ -122,7 +121,7 @@ export const OpenApiView: React.FC = () => {
             </div>
           )
         })}
-      </div>
+      </article>
     </div>
   )
 }

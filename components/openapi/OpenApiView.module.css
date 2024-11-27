@@ -4,8 +4,14 @@
 
 .title {
   font-weight: 700;
-  margin-top: var(--a-spacing-8);
+  font-size: 36px;
+  line-height: 54px;
+  margin-top: var(--a-spacing-2);
   margin-bottom: var(--a-spacing-12);
+}
+
+.document {
+  padding: var(--a-spacing-4) var(--a-spacing-12);
 }
 
 .operation {
