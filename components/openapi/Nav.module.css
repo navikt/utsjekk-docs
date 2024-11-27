@@ -20,9 +20,11 @@
   font-size: var(--a-font-size-small);
   border-radius: var(--a-border-radius-medium);
   transition: background 0.2s ease;
+  white-space: nowrap;
 }
 
-.link:global(.active) {
+.link:global(.active),
+.link:hover {
   background: light-dark(
     hsl(212deg 100% calc(45% + 49%) / 1),
     hsl(204deg 100% calc(55% + 21%) / 0.1)

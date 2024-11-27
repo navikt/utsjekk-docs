@@ -1,7 +1,8 @@
 openapi: 3.1.1
 info:
   version: "1"
-  title: Nytt API for iverksetting av utbetaling
+  title: Utsjekk API (WIP)
+  description: API for iverksetting av utbetalinger mot Oppdragssystemet
 servers:
   - url: https://utsjekk.intern.nav.no
     description: Generated server url

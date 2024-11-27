@@ -6,7 +6,7 @@ import navLogo from "@/public/nav-logo-red.svg"
 import styles from "./Logo.module.css"
 
 export const Logo = () => (
-  <HStack gap="6" align="center">
+  <HStack gap="6" align="center" className={styles.container}>
     <Image src={navLogo.src} alt="" width="64" height="20" />
     <span className={styles.headerDivider} />
     <BodyShort weight="semibold" size="large">

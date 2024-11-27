@@ -12,6 +12,7 @@ import { Tag } from "@/components/Tag"
 import { OpenApiDoc } from "@/lib/openapi/types"
 
 import styles from "./Nav.module.css"
+import { SpecSelector } from "@/components/openapi/SpecSelector"
 
 enum Method {
   Get = "get",
@@ -91,7 +92,9 @@ const useActivateWhenInViewport = (
         }
       }
 
-      elementsToActivate[activeElement.id].classList.add(activeClass)
+      if (activeElement) {
+        elementsToActivate[activeElement.id].classList.add(activeClass)
+      }
     }
 
     window.addEventListener("scroll", scrollHandler)
@@ -132,6 +135,7 @@ export const Nav: React.FC<Props> = ({ doc }) => {
   return (
     <div>
       <nav className={styles.nav}>
+        <SpecSelector />
         {sections.map((section) => (
           <a
             key={`${section.method}-${section.operationId}`}

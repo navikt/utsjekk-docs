@@ -1,4 +1,4 @@
-import { ComponentProps } from "react"
+import { ComponentProps, useContext } from "react"
 import { OpenAPIV3_1 } from "openapi-types"
 import { Callout } from "nextra/components"
 import { BodyLong, Heading } from "@navikt/ds-react"
@@ -13,6 +13,7 @@ import { Tag } from "@/components/Tag"
 import styles from "./OpenApiView.module.css"
 
 import OperationObject = OpenAPIV3_1.OperationObject
+import { OpenApiSpecContext } from "@/lib/openapi/context"
 
 enum Method {
   Get = "get",
@@ -44,10 +45,10 @@ const calloutTypeForMethod = (
 }
 
 export const OpenApiView: React.FC = () => {
-  const doc = useOpenApiDoc("new")
+  const { currentDoc } = useContext(OpenApiSpecContext)
 
-  const operations = doc.paths
-    ? Object.entries(doc.paths)
+  const operations = currentDoc.paths
+    ? Object.entries(currentDoc.paths)
         .filter(([_, pathObject]) => !!pathObject)
         .flatMap(([path, pathObject]) =>
           Object.values(Method)
@@ -66,14 +67,17 @@ export const OpenApiView: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <Nav doc={doc} />
+      <Nav doc={currentDoc} />
       <div>
         <Heading className={styles.title} level="1" size="large">
-          {doc.info.title}
+          {currentDoc.info.title}
         </Heading>
         {operations.map((operation) => {
           return (
-            <div className={styles.operation} key={operation.method}>
+            <div
+              className={styles.operation}
+              key={`${operation.path}-${operation.method}`}
+            >
               <Heading className={styles.subTitle} level="2" size="medium">
                 {operation.summary}
                 <a id={operation.id} className={styles.scrollAnchor} />
@@ -98,16 +102,22 @@ export const OpenApiView: React.FC = () => {
                 </BodyLong>
               )}
               {operation.parameters && (
-                <ParametersView parameters={operation.parameters} doc={doc} />
+                <ParametersView
+                  parameters={operation.parameters}
+                  doc={currentDoc}
+                />
               )}
               {operation.requestBody && (
                 <RequestBodyView
                   requestBody={operation.requestBody}
-                  doc={doc}
+                  doc={currentDoc}
                 />
               )}
               {operation.responses && (
-                <ResponsesView responses={operation.responses} doc={doc} />
+                <ResponsesView
+                  responses={operation.responses}
+                  doc={currentDoc}
+                />
               )}
             </div>
           )

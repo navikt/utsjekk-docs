@@ -1,19 +1,22 @@
 ---
-  title: API-spesifikasjon
+title: API-spesifikasjon
 ---
-import { parseOpenApiSpec } from "@/lib/openapi/parser";
-import { OpenApiView } from "@/components/openapi/OpenApiView";
 
+import { parseOpenApiSpec } from "@/lib/openapi/parser"
+import { OpenApiView } from "@/components/openapi/OpenApiView"
+import { OpenApiSpecProvider } from "@/lib/openapi/context";
 
 export async function getStaticProps() {
   const spec = parseOpenApiSpec()
   return {
     props: {
       ssg: {
-        spec
-      }
-    }
+        spec,
+      },
+    },
   }
 }
 
-<OpenApiView />
+<OpenApiSpecProvider>
+  <OpenApiView />
+</OpenApiSpecProvider>

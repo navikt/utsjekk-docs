@@ -31,7 +31,6 @@ export const ParametersView: React.FC<Props> = ({ parameters, doc }) => {
       </Heading>
       <ul>
         {pathParameters.map((parameter) => {
-          console.log("PARAMETER", parameter)
           const schema: NonArraySchemaObject =
             parameter.schema && isReferenceObject(parameter.schema)
               ? (resolveRef(parameter.schema.$ref, doc) as NonArraySchemaObject)

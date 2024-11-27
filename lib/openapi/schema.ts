@@ -47,12 +47,6 @@ const BooleanSchemaObjectSchema = z.object({
   const: z.any().optional(),
 })
 
-const NullSchemaObjectSchema = z.object({
-  type: z.literal("null"),
-  enum: z.array(z.any()).nonempty().optional(),
-  const: z.any().optional(),
-})
-
 const NumberSchemaObjectSchema = z.object({
   type: z.literal("number"),
   multipleOf: z.number().positive().optional(),
@@ -91,7 +85,7 @@ const StringSchemaObjectSchema = z.object({
 
 const ArraySchemaObjectSchema = z.object({
   type: z.literal("array"),
-  items: z.array(z.any()).optional(),
+  items: z.record(z.string(), z.any()),
   maxItems: z.number().nonnegative().optional(),
   minItems: z.number().nonnegative().optional(),
   uniqueItems: z.boolean().optional(),
@@ -120,7 +114,6 @@ const SchemaObjectSchema = z.discriminatedUnion("type", [
   ArraySchemaObjectSchema,
   ObjectSchemaObjectSchema,
   BooleanSchemaObjectSchema,
-  NullSchemaObjectSchema,
 ])
 
 const ExampleObjectSchema = z.object({
@@ -242,7 +235,7 @@ const OperationObjectSchema = z.object({
     .array(ParameterObjectSchema.or(ReferenceObjectSchema))
     .optional(),
   requestBody: RequestBodyObjectSchema.or(ReferenceObjectSchema).optional(),
-  responses: ResponsesObjectSchema.optional(),
+  responses: ResponsesObjectSchema,
   callbacks: z
     .record(z.string(), CallbackObjectSchema.or(ReferenceObjectSchema))
     .optional(),
@@ -312,7 +305,7 @@ export const OpenApiObjectSchema = z.object({
   servers: z.array(ServerObjectSchema).optional(),
   paths: PathsObjectSchema.optional(),
   webhooks: z.record(z.string(), PathItemObjectSchema).optional(),
-  components: ComponentsObjectSchema.optional(),
+  components: ComponentsObjectSchema,
   security: z.array(SecurityRequirementObjectSchema).optional(),
   tags: z.array(TagObjectSchema).optional(),
   externalDocs: ExternalDocumentationObjectSchema.optional(),
