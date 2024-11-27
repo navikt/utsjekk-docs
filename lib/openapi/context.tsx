@@ -30,7 +30,7 @@ type Props = {
 
 export const OpenApiSpecProvider: React.FC<Props> = ({
   children,
-  defaultDoc = "Utsjekk API",
+  defaultDoc = "Utsjekk API (wip)",
 }) => {
   const [doc, setDoc] = useState<OpenApiDoc>(getDoc(defaultDoc))
 

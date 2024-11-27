@@ -3,12 +3,28 @@
 :root {
   color-scheme: light dark;
   --example-background: light-dark(
-      var(--a-surface-neutral-subtle),
-      var(--a-surface-neutral-active)
+    var(--a-surface-neutral-subtle),
+    var(--a-surface-neutral-active)
+  );
+
+  /* Colors */
+  --warning-background: light-dark(
+      var(--a-orange-50),
+      var(--a-orange-900)
+  );
+  --danger-background: light-dark(
+      var(--a-red-50),
+      var(--a-red-800)
+  );
+  --info-background: light-dark(
+      var(--a-lightblue-50),
+      var(--a-lightblue-900)
   );
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -22,21 +38,35 @@ body {
   background: var(--a-bg-default);
 }
 
-img, picture, video, canvas, svg {
+img,
+picture,
+video,
+canvas,
+svg {
   display: block;
   max-width: 100%;
 }
 
-input, button, textarea, select {
+input,
+button,
+textarea,
+select {
   font: inherit;
 }
 
-p, h1, h2, h3, h4, h5, h6 {
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   max-width: 75ch;
   overflow-wrap: break-word;
 }
 
-#root, #__next {
+#root,
+#__next {
   isolation: isolate;
 }
 

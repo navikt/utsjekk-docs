@@ -15,24 +15,15 @@
 
 .tag.warning {
   border: 1px solid var(--a-border-warning);
-  background: light-dark(
-      var(--a-orange-50),
-      var(--a-orange-900)
-  );
+  background: var(--warning-background);
 }
 
 .tag.info {
   border: 1px solid var(--a-border-info);
-  background: light-dark(
-      var(--a-lightblue-50),
-      var(--a-lightblue-900)
-  );
+  background: var(--info-background);
 }
 
 .tag.error {
   border: 1px solid var(--a-border-danger);
-  background: light-dark(
-      var(--a-red-50),
-      var(--a-red-900)
-  );
+  background: var(--danger-background);
 }

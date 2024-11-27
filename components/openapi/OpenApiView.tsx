@@ -1,6 +1,6 @@
 import { useContext, useMemo } from "react"
 import { OpenAPIV3_1 } from "openapi-types"
-import { Heading } from "@navikt/ds-react"
+import { BodyLong, Heading } from "@navikt/ds-react"
 
 import { OpenApiSpecContext } from "@/lib/openapi/context"
 import { Nav } from "@/components/openapi/Nav"
@@ -46,6 +46,11 @@ export const OpenApiView: React.FC = () => {
         <Heading className={styles.title} level="1" size="large">
           {currentDoc.info.title}
         </Heading>
+        {currentDoc.info.description && (
+          <BodyLong className={styles.description}>
+            {currentDoc.info.description}
+          </BodyLong>
+        )}
         {operations.map((operation) => {
           return <OperationView key={operation.operationId} {...operation} />
         })}
