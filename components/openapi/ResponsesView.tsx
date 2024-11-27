@@ -1,8 +1,9 @@
+import { useContext } from "react"
 import { OpenAPIV3_1 } from "openapi-types"
 import { Heading } from "@navikt/ds-react"
 
+import { OpenApiSpecContext } from "@/lib/openapi/context"
 import { isReferenceObject } from "@/lib/openapi/guards"
-import { OpenApiDoc } from "@/lib/openapi/types"
 import { resolveRef } from "@/lib/openapi/util"
 import { ResponseView } from "@/components/openapi/ResponseView"
 
@@ -12,10 +13,11 @@ import ResponseObject = OpenAPIV3_1.ResponseObject
 
 type Props = {
   responses: Record<string, ReferenceObject | ResponseObject>
-  doc: OpenApiDoc
 }
 
-export const ResponsesView: React.FC<Props> = ({ responses, doc }) => {
+export const ResponsesView: React.FC<Props> = ({ responses }) => {
+  const { currentDoc: doc } = useContext(OpenApiSpecContext)
+
   return (
     <>
       <Heading className={styles.title} level="3" size="small">

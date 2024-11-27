@@ -1,12 +1,11 @@
 import clsx from "clsx"
-import { Callout } from "nextra/components"
-import { ComponentProps } from "react"
+
+import { Tag as NavTag, TagProps } from "@navikt/ds-react"
 
 import styles from "./Tag.module.css"
 
-type Props = ComponentProps<typeof Callout> & {
-  className?: string
-  size?: "xsmall" | "small" | "medium"
+type Props = TagProps & {
+  children: string
 }
 
 export const Tag: React.FC<Props> = ({
@@ -16,8 +15,16 @@ export const Tag: React.FC<Props> = ({
   ...rest
 }) => {
   return (
-    <span className={clsx(styles.tag, styles[size], className)}>
-      <Callout {...rest}>{children}</Callout>
-    </span>
+    <NavTag
+      className={clsx(
+        styles.tag,
+        styles[size],
+        styles[rest.variant],
+        className,
+      )}
+      {...rest}
+    >
+      {children.toUpperCase()}
+    </NavTag>
   )
 }

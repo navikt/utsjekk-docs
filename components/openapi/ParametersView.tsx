@@ -1,9 +1,10 @@
+import { useContext } from "react"
 import { OpenAPIV3_1 } from "openapi-types"
 import { BodyShort, Heading } from "@navikt/ds-react"
 
 import { isParameterObject, isReferenceObject } from "@/lib/openapi/guards"
 import { renderRange, resolveRef } from "@/lib/openapi/util"
-import { OpenApiDoc } from "@/lib/openapi/types"
+import { OpenApiSpecContext } from "@/lib/openapi/context"
 import { KeyView } from "@/components/openapi/KeyView"
 import { EnumView } from "@/components/openapi/EnumView"
 import { ExampleView } from "@/components/openapi/ExampleView"
@@ -16,10 +17,11 @@ import NonArraySchemaObject = OpenAPIV3_1.NonArraySchemaObject
 
 type Props = {
   parameters: (ReferenceObject | ParameterObject)[]
-  doc: OpenApiDoc
 }
 
-export const ParametersView: React.FC<Props> = ({ parameters, doc }) => {
+export const ParametersView: React.FC<Props> = ({ parameters }) => {
+  const { currentDoc: doc } = useContext(OpenApiSpecContext)
+
   const pathParameters = parameters
     .filter(isParameterObject)
     .filter(isParameterObject)

@@ -1,53 +1,24 @@
-import { ComponentProps, useContext } from "react"
+import { useContext, useMemo } from "react"
 import { OpenAPIV3_1 } from "openapi-types"
-import { Callout } from "nextra/components"
-import { BodyLong, Heading } from "@navikt/ds-react"
+import { Heading } from "@navikt/ds-react"
 
 import { OpenApiSpecContext } from "@/lib/openapi/context"
-import { RequestBodyView } from "@/components/openapi/RequestBodyView"
-import { ParametersView } from "@/components/openapi/ParametersView"
-import { ResponsesView } from "@/components/openapi/ResponsesView"
 import { Nav } from "@/components/openapi/Nav"
-import { Tag } from "@/components/Tag"
+import { Method } from "@/components/openapi/types"
+import { OperationView } from "@/components/openapi/OperationView"
 
 import styles from "./OpenApiView.module.css"
-
+import { OpenApiDoc } from "@/lib/openapi/types"
 import OperationObject = OpenAPIV3_1.OperationObject
 
-enum Method {
-  Get = "get",
-  Post = "post",
-  Put = "put",
-  Patch = "patch",
-  Delete = "delete",
-  Head = "head",
-  Options = "options",
-  Trace = "trace",
+type Operation = OperationObject & {
+  path: string
+  method: Method
 }
 
-const calloutTypeForMethod = (
-  method: Method,
-): ComponentProps<typeof Callout>["type"] => {
-  switch (method) {
-    case Method.Trace:
-    case Method.Options:
-    case Method.Head:
-    case Method.Get:
-      return "info"
-    case Method.Patch:
-    case Method.Put:
-    case Method.Post:
-      return "warning"
-    case Method.Delete:
-      return "error"
-  }
-}
-
-export const OpenApiView: React.FC = () => {
-  const { currentDoc } = useContext(OpenApiSpecContext)
-
-  const operations = currentDoc.paths
-    ? Object.entries(currentDoc.paths)
+const getOperations = (doc: OpenApiDoc): Operation[] =>
+  doc.paths
+    ? Object.entries(doc.paths)
         .filter(([_, pathObject]) => !!pathObject)
         .flatMap(([path, pathObject]) =>
           Object.values(Method)
@@ -55,7 +26,6 @@ export const OpenApiView: React.FC = () => {
             .map((method) => {
               const pathItem = pathObject![method] as OperationObject
               return {
-                id: pathItem.operationId,
                 path: path,
                 method: method,
                 ...pathItem,
@@ -63,6 +33,11 @@ export const OpenApiView: React.FC = () => {
             }),
         )
     : []
+
+export const OpenApiView: React.FC = () => {
+  const { currentDoc } = useContext(OpenApiSpecContext)
+
+  const operations = useMemo(() => getOperations(currentDoc), [currentDoc])
 
   return (
     <div className={styles.container}>
@@ -72,54 +47,7 @@ export const OpenApiView: React.FC = () => {
           {currentDoc.info.title}
         </Heading>
         {operations.map((operation) => {
-          return (
-            <div
-              className={styles.operation}
-              key={`${operation.path}-${operation.method}`}
-            >
-              <Heading className={styles.subTitle} level="2" size="medium">
-                {operation.summary}
-                <a id={operation.id} className={styles.scrollAnchor} />
-              </Heading>
-              <div className={styles.path}>
-                <Tag
-                  className={styles.method}
-                  type={calloutTypeForMethod(operation.method)}
-                  emoji
-                >
-                  {operation.method}
-                </Tag>
-                <pre>{operation.path}</pre>
-                <a
-                  className={styles.operationAnchor}
-                  href={`#${operation.id}`}
-                />
-              </div>
-              {operation.description && (
-                <BodyLong className={styles.description}>
-                  {operation.description}
-                </BodyLong>
-              )}
-              {operation.parameters && (
-                <ParametersView
-                  parameters={operation.parameters}
-                  doc={currentDoc}
-                />
-              )}
-              {operation.requestBody && (
-                <RequestBodyView
-                  requestBody={operation.requestBody}
-                  doc={currentDoc}
-                />
-              )}
-              {operation.responses && (
-                <ResponsesView
-                  responses={operation.responses}
-                  doc={currentDoc}
-                />
-              )}
-            </div>
-          )
+          return <OperationView key={operation.operationId} {...operation} />
         })}
       </article>
     </div>

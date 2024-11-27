@@ -1,18 +1,11 @@
-import {
-  ComponentProps,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react"
-import { Callout } from "nextra/components"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { TagProps } from "@navikt/ds-react"
 
 import { Tag } from "@/components/Tag"
+import { SpecSelector } from "@/components/openapi/SpecSelector"
 import { OpenApiDoc } from "@/lib/openapi/types"
 
 import styles from "./Nav.module.css"
-import { SpecSelector } from "@/components/openapi/SpecSelector"
 
 enum Method {
   Get = "get",
@@ -25,9 +18,7 @@ enum Method {
   Trace = "trace",
 }
 
-const calloutTypeForMethod = (
-  method: Method,
-): ComponentProps<typeof Callout>["type"] => {
+const calloutTypeForMethod = (method: Method): TagProps["variant"] => {
   switch (method) {
     case Method.Trace:
     case Method.Options:
@@ -143,11 +134,7 @@ export const Nav: React.FC<Props> = ({ doc }) => {
             href={`#${section.operationId}`}
             ref={updateRef(section)}
           >
-            <Tag
-              className={styles.tag}
-              size="xsmall"
-              type={calloutTypeForMethod(section.method)}
-            >
+            <Tag size="small" variant={calloutTypeForMethod(section.method)}>
               {section.method}
             </Tag>
             {section.summary}
