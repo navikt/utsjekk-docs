@@ -23,8 +23,7 @@
   white-space: nowrap;
 }
 
-.link:global(.active),
-.link:hover {
+.link:global(.active) {
   background: light-dark(
     hsl(212deg 100% calc(45% + 49%) / 1),
     hsl(204deg 100% calc(55% + 21%) / 0.1)
@@ -34,4 +33,12 @@
     hsl(204deg 100% calc(55% + 0%) / 1)
   );
   font-weight: 600;
+}
+
+.link:hover {
+  background: light-dark(
+    hsl(212deg 100% calc(45% + 49%) / 1),
+    hsl(204deg 100% calc(55% + 21%) / 0.1)
+  );
+  color: var(--a-text-default);
 }

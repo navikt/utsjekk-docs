@@ -30,10 +30,7 @@
       hsl(212deg 100% calc(45% + 49%) / 1),
       hsl(204deg 100% calc(55% + 21%) / 0.1)
   );
-  color: light-dark(
-      hsl(212deg 100% calc(45% + -13%) / 1),
-      hsl(204deg 100% calc(55% + 0%) / 1)
-  );
+  color: var(--a-text-default);
   font-weight: 600;
 }
 
