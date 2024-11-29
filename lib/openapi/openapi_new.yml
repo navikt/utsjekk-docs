@@ -146,6 +146,18 @@ paths:
           description: ID til utbetalingen. Sendes ikke til OS/UR.
           example: "7832faed-2140-4884-9e5c-5ab434e57fbb"
       responses:
+        "default":
+          description: Uventet feil
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                Error:
+                  value:
+                    msg: "missing path param"
+                    field: "uid"
+                    doc: "https://navikt.github.io/utsjekk"
         "200":
           description: Hentet status for utbetalingen
           content:
@@ -163,6 +175,10 @@ paths:
                       - OK
                       - IKKE_PÅBEGYNT
                       - OK_UTEN_UTBETALING
+              examples:
+                "200":
+                  value:
+                    status: SENDT_TIL_OPPDRAG
         "400":
           description: Ugyldig format på uid-parameter
         "404":

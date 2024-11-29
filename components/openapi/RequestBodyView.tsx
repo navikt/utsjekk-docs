@@ -59,7 +59,7 @@ export const RequestBodyView: React.FC<Props> = ({ requestBody }) => {
             {examples && (
               <>
                 <Heading level="4" size="xsmall">
-                  Eksempler
+                  Eksempler:
                 </Heading>
                 <Tabs className={styles.tabs} items={Object.keys(examples)}>
                   {Object.entries(examples).map(
