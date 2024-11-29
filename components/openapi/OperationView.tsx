@@ -43,27 +43,28 @@ export const OperationView: React.FC<Props> = ({
 }) => {
   return (
     <div className={styles.operation} key={`${path}-${method}`}>
-      <Heading className={styles.subTitle} level="2" size="medium">
+      <Heading level="2" size="medium">
         {summary}
         <a id={id} className={styles.scrollAnchor} />
       </Heading>
-      <div className={styles.path}>
-        <Tag
-          className={styles.method}
-          size="medium"
-          variant={getTagType(method)}
-        >
-          {method.toUpperCase()}
-        </Tag>
-        <pre>{path}</pre>
-        <a className={styles.operationAnchor} href={`#${id}`} />
+      <div>
+        <div className={styles.path}>
+          <Tag
+            className={styles.method}
+            size="medium"
+            variant={getTagType(method)}
+          >
+            {method.toUpperCase()}
+          </Tag>
+          <pre>{path}</pre>
+          <a className={styles.operationAnchor} href={`#${id}`} />
+        </div>
+        {description && <BodyLong>{description}</BodyLong>}
       </div>
-      {description && (
-        <BodyLong className={styles.description}>{description}</BodyLong>
-      )}
       {parameters && <ParametersView parameters={parameters} />}
       {requestBody && <RequestBodyView requestBody={requestBody} />}
       {responses && <ResponsesView responses={responses} />}
+      <hr className={styles.separator} />
     </div>
   )
 }

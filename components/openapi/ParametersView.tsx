@@ -27,7 +27,7 @@ export const ParametersView: React.FC<Props> = ({ parameters }) => {
     .filter(isParameterObject)
 
   return (
-    <>
+    <div>
       <Heading className={styles.title} level="3" size="small">
         Path-parametre
       </Heading>
@@ -63,6 +63,6 @@ export const ParametersView: React.FC<Props> = ({ parameters }) => {
           )
         })}
       </ul>
-    </>
+    </div>
   )
 }

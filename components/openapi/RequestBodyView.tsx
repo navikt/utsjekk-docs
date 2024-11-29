@@ -13,6 +13,7 @@ import { JsonView } from "@/components/openapi/JsonView"
 import ReferenceObject = OpenAPIV3_1.ReferenceObject
 import RequestBodyObject = OpenAPIV3_1.RequestBodyObject
 import SchemaObject = OpenAPIV3_1.SchemaObject
+import { Tabs } from "nextra/components"
 
 type Example = {
   [name: string]: {
@@ -41,7 +42,7 @@ export const RequestBodyView: React.FC<Props> = ({ requestBody }) => {
           ? resolveRef(mediaTypeObject.schema.$ref, doc)
           : mediaTypeObject.schema
 
-        console.log(mediaTypeObject)
+        const examples = mediaTypeObject.examples ?? schema.examples
 
         return (
           <div className={styles.requestBody} key={mediaType}>
@@ -55,20 +56,21 @@ export const RequestBodyView: React.FC<Props> = ({ requestBody }) => {
               {required && <Required />}
             </div>
             {schema && <SchemaObjectView schema={schema} doc={doc} />}
-            {mediaTypeObject.examples && (
+            {examples && (
               <>
                 <Heading level="4" size="xsmall">
                   Eksempler
                 </Heading>
-                {Object.entries(mediaTypeObject.examples).map(
-                  ([name, content]) =>
-                    (content as Example).value && (
-                      <Fragment key={name}>
-                        {name}:
-                        <JsonView json={(content as Example).value} />
-                      </Fragment>
-                    ),
-                )}
+                <Tabs className={styles.tabs} items={Object.keys(examples)}>
+                  {Object.entries(examples).map(
+                    ([name, content]) =>
+                      (content as Example).value && (
+                        <Tabs.Tab key={name}>
+                          <JsonView json={(content as Example).value} />
+                        </Tabs.Tab>
+                      ),
+                  )}
+                </Tabs>
               </>
             )}
           </div>

@@ -45,6 +45,7 @@ const BooleanSchemaObjectSchema = z.object({
   type: z.literal("boolean"),
   enum: z.array(z.any()).nonempty().optional(),
   const: z.any().optional(),
+  examples: z.record(z.string(), z.any()).optional(),
 })
 
 const NumberSchemaObjectSchema = z.object({
@@ -56,6 +57,7 @@ const NumberSchemaObjectSchema = z.object({
   exclusiveMinimum: z.boolean().optional(),
   enum: z.array(z.any()).nonempty().optional(),
   const: z.any().optional(),
+  examples: z.record(z.string(), z.any()).optional(),
 })
 
 const StringSchemaObjectSchema = z.object({
@@ -81,6 +83,7 @@ const StringSchemaObjectSchema = z.object({
     .optional(),
   enum: z.array(z.any()).nonempty().optional(),
   const: z.any().optional(),
+  examples: z.record(z.string(), z.any()).optional(),
 })
 
 const ArraySchemaObjectSchema = z.object({
@@ -93,6 +96,7 @@ const ArraySchemaObjectSchema = z.object({
   minContains: z.number().nonnegative().optional(),
   enum: z.array(z.any()).nonempty().optional(),
   const: z.any().optional(),
+  examples: z.record(z.string(), z.any()).optional(),
 })
 
 const ObjectSchemaObjectSchema = z.object({
@@ -106,6 +110,7 @@ const ObjectSchemaObjectSchema = z.object({
   const: z.any().optional(),
   oneOf: z.array(z.any()).optional(),
   allOf: z.array(z.any()).optional(),
+  examples: z.record(z.string(), z.any()).optional(),
 })
 
 const SchemaObjectSchema = z.discriminatedUnion("type", [

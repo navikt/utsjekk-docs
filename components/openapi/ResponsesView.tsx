@@ -19,7 +19,7 @@ export const ResponsesView: React.FC<Props> = ({ responses }) => {
   const { currentDoc: doc } = useContext(OpenApiSpecContext)
 
   return (
-    <>
+    <div>
       <Heading className={styles.title} level="3" size="small">
         Respons
       </Heading>
@@ -39,6 +39,6 @@ export const ResponsesView: React.FC<Props> = ({ responses }) => {
           )
         })}
       </div>
-    </>
+    </div>
   )
 }

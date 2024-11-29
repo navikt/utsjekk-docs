@@ -32,21 +32,6 @@ paths:
           application/json:
             schema:
               "$ref": "#/components/schemas/UtbetalingApi"
-            examples:
-              Tiltakspenger:
-                value:
-                  sakId: "ASD123NLDQ23"
-                  behandlingId: "ADNLK123lDLJNWQ1"
-                  personident: "15507600333"
-                  vedtakstidspunkt: "2024-11-26T09:34:10.912Z"
-                  stønad: "ARBEIDSTRENING"
-                  beslutterId: "Z123456"
-                  saksbehandlerId: "A234567"
-                  perioder:
-                    - fom: "2024-10-01"
-                      tom: "2024-10-31"
-                      beløp: 1234
-                      betalendeEnhet: "1234"
         required: true
       responses:
         "201":
@@ -203,7 +188,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/UtbetalingApi"
+              "$ref": "#/components/schemas/SimuleringApi"
         required: true
       responses:
         "200":
@@ -325,6 +310,34 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/UtbetalingsperiodeApi"
+      examples:
+        Tiltakspenger:
+          value:
+            sakId: "ASD123NLDQ23"
+            behandlingId: "ADNLK123lDLJNWQ1"
+            personident: "15507600333"
+            vedtakstidspunkt: "2024-11-26T09:34:10.912Z"
+            stønad: "ARBEIDSTRENING"
+            beslutterId: "Z123456"
+            saksbehandlerId: "A234567"
+            perioder:
+              - fom: "2024-10-01"
+                tom: "2024-10-31"
+                beløp: 1024
+                betalendeEnhet: "1234"
+        Tilleggsstønader:
+          value:
+            sakId: "ASD123NLDQ23"
+            behandlingId: "ADNLK123lDLJNWQ1"
+            personident: "15507600333"
+            vedtakstidspunkt: "2024-11-26T09:34:10.912Z"
+            stønad: "TILSYN_BARN_ENSLIG_FORSØRGER"
+            beslutterId: "Z123456"
+            saksbehandlerId: "A234567"
+            perioder:
+              - fom: "2024-10-01"
+                tom: "2024-10-01"
+                beløp: 256
 
     UtbetalingsperiodeApi:
       type: object
@@ -450,6 +463,30 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/UtbetalingsperiodeApi"
+      examples:
+        Tiltakspenger:
+          value:
+            sakId: "ASD123NLDQ23"
+            behandlingId: "ADNLK123lDLJNWQ1"
+            personident: "15507600333"
+            stønad: "ARBEIDSTRENING"
+            saksbehandlerId: "A234567"
+            perioder:
+              - fom: "2024-10-01"
+                tom: "2024-10-31"
+                beløp: 1024
+                betalendeEnhet: "1234"
+        Tilleggsstønader:
+          value:
+            sakId: "ASD123NLDQ23"
+            behandlingId: "ADNLK123lDLJNWQ1"
+            personident: "15507600333"
+            stønad: "TILSYN_BARN_ENSLIG_FORSØRGER"
+            saksbehandlerId: "A234567"
+            perioder:
+              - fom: "2024-10-01"
+                tom: "2024-10-01"
+                beløp: 256
 
     SimuleringApiRespons:
       type: object
