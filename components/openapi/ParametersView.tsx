@@ -52,6 +52,7 @@ export const ParametersView: React.FC<Props> = ({ parameters }) => {
                   )}
                 </pre>
                 <ExampleView schema={schema} />
+                {parameter.example && <ExampleView schema={parameter} />}
                 {parameter.description && (
                   <BodyShort>{parameter.description}</BodyShort>
                 )}

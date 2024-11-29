@@ -77,10 +77,6 @@ const ExpandableResponseView: React.FC<Props> = ({
             return (
               <div key={mediaType}>
                 <Detail className={styles.mediaType}>{mediaType}</Detail>
-                {/*{(() => {*/}
-                {/*  switch (schemaObject.type) {*/}
-                {/*  }*/}
-                {/*})()}*/}
                 <SchemaObjectView schema={schemaObject} doc={doc} />
               </div>
             )

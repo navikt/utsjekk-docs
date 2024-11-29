@@ -1,0 +1,30 @@
+.container {
+  background: light-dark(
+      var(--a-gray-50),
+      var(--a-bg-subtle)
+  );
+  padding: var(--a-spacing-4);
+  font-size: var(--a-font-size-small);
+  color: var(--a-text-subtle);
+}
+
+.key {
+  color: light-dark(
+    var(--a-blue-600),
+    var(--a-blue-300)
+  );
+}
+
+.string {
+  color: light-dark(
+      var(--a-green-600),
+      var(--a-green-300)
+  );
+}
+
+.number {
+  color: light-dark(
+      var(--a-orange-700),
+      var(--a-orange-300)
+  );
+}

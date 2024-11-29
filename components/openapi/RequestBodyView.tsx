@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { Fragment, useContext } from "react"
 import { OpenAPIV3_1 } from "openapi-types"
 import { Heading } from "@navikt/ds-react"
 
@@ -9,8 +9,16 @@ import { Required } from "@/components/openapi/Required"
 import { SchemaObjectView } from "@/components/openapi/SchemaObjectView"
 
 import styles from "./RequestBodyView.module.css"
+import { JsonView } from "@/components/openapi/JsonView"
 import ReferenceObject = OpenAPIV3_1.ReferenceObject
 import RequestBodyObject = OpenAPIV3_1.RequestBodyObject
+import SchemaObject = OpenAPIV3_1.SchemaObject
+
+type Example = {
+  [name: string]: {
+    value: any
+  }
+}
 
 type Props = {
   requestBody: ReferenceObject | RequestBodyObject
@@ -29,9 +37,11 @@ export const RequestBodyView: React.FC<Props> = ({ requestBody }) => {
   return (
     <>
       {Object.entries(content).map(([mediaType, mediaTypeObject]) => {
-        const schema = isReferenceObject(mediaTypeObject.schema)
+        const schema: SchemaObject = isReferenceObject(mediaTypeObject.schema)
           ? resolveRef(mediaTypeObject.schema.$ref, doc)
           : mediaTypeObject.schema
+
+        console.log(mediaTypeObject)
 
         return (
           <div className={styles.requestBody} key={mediaType}>
@@ -45,6 +55,22 @@ export const RequestBodyView: React.FC<Props> = ({ requestBody }) => {
               {required && <Required />}
             </div>
             {schema && <SchemaObjectView schema={schema} doc={doc} />}
+            {mediaTypeObject.examples && (
+              <>
+                <Heading level="4" size="xsmall">
+                  Eksempler
+                </Heading>
+                {Object.entries(mediaTypeObject.examples).map(
+                  ([name, content]) =>
+                    (content as Example).value && (
+                      <Fragment key={name}>
+                        {name}:
+                        <JsonView json={(content as Example).value} />
+                      </Fragment>
+                    ),
+                )}
+              </>
+            )}
           </div>
         )
       })}

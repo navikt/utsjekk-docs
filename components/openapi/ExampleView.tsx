@@ -3,9 +3,10 @@ import { OpenAPIV3_1 } from "openapi-types"
 import styles from "./ExampleView.module.css"
 
 import SchemaObject = OpenAPIV3_1.SchemaObject
+import ParameterObject = OpenAPIV3_1.ParameterObject
 
 type Props = {
-  schema: SchemaObject
+  schema: SchemaObject | ParameterObject
 }
 
 export const ExampleView: React.FC<Props> = ({ schema }) => {
