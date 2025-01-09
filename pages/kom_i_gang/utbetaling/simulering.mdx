@@ -5,31 +5,71 @@ title: Simulering
 # Simulering
 
 ## Hva er simulering
-Simulering er en "dry run" mot Oppdragssytemet og viser hvordan resultatet av en iverksetting ville blitt.
+Simulering er en "dry run" mot Oppdragssytemet (OS) og viser hvordan resultatet av en iverksetting ville blitt.
 Simuleringen kan fortelle om iverksettingen vil være en ny utbetaling, en feilutbetaling eller en etterbetaling. I tillegg vil man få informasjon om
 iverksatte utbetalinger fra andre fagområder innenfor samme gruppe (Se [avsnitt om oppsett](#regler-for-arena-ytelsene)) – for Arena-ytelsene vil man
 eksempelvis kunne se om brukeren har utbetalinger i samme tidsrom fra Arena. Man vil også få informasjon om ulike typer trekk for utbetalingen,
 eksempelvis skattetrekk.
 
 ### Øyeblikksbilde
-Simuleringen er et øyeblikksbilde som hensyntar tilstanden i Oppdragssystemet i det tidspunktet man utfører simuleringen. Dersom man iverksetter utbetalingen
+Simuleringen er et øyeblikksbilde som hensyntar tilstanden i OS i det tidspunktet man utfører simuleringen. Dersom man iverksetter utbetalingen
 en stund etter simuleringen, kan tilstanden ha endret seg og resultatet vil derfor kunne bli annerledes.
 
 ## Hvorfor gjøre simulering
-Typisk gjøres simulering i en saksbehandlingskontekst, ofte for revurderingsbehandlinger. Saksbehandler kan da sjekke om resultatet av iverksettingen vil bli slik
-hen forventer, og om brukeren har evt. andre utbetalinger som vil kunne påvirke beregningen. I noen saksbehandlingsløsninger brukes også simulering for å forutsi og
+Typisk gjøres simulering i en saksbehandlingskontekst, ofte for revurderingsbehandlinger. Saksbehandler kan da sjekke om resultatet av behandlingen vil bli som forventet, og om brukeren har evt. andre utbetalinger som vil kunne påvirke beregningen. I noen saksbehandlingsløsninger brukes også simulering for å forutsi og
 evt. varsle bruker om at revurderingen vil trigge en tilbakekrevingsbehandling.
 
-## Oppsett for Arena-ytelsene
-[//]: # (- Forklare faggruppe vs mottregningsgruppe?)
-Motregningsgruppe er et subset av ytelser i en faggruppe, men som kan motregnes mot hverandre. Når man simulerer inneholder responsen informasjon om ytelser i samme faggruppe. Eksempel på faggruppe er arbeidsytelser (ARBYT) a.k.a Arena-ytelser.
+## Oppsett for Arena-ytelsene i Økonomisystemet
+OS er strukturert med _fagområder_ og _faggrupper_. Et fagområde tilsvarer en ytelse, eller mer spesifikt én vedtaksløsning. I OS er
+ eksempelvis dagpenger i ny vedtaksløsning, dagpenger i Arena, og såkalte manuelle posteringer på dagpenger tre ulike fagområder. Dette gjelder alle Arena-ytelsene.
+
+Fagområder som logisk eller faglig sett hører sammen grupperes i samme _faggruppe_. I OS er AAP, dagpenger, tiltakspenger og tilleggsstønader gruppert sammen i
+faggruppen som heter ARBYT (for _arbeidsytelser_). Det er en del regler og konfigurasjon i OS som settes på faggruppe-nivå.
+
+I tillegg har OS et konsept som heter _motregningsgruppe_. En motregningsgruppe er et subset av fagområder i en faggruppe som kan motregnes mot hverandre.
+Det betyr at en reduksjon i utbetalingen på et fagområde kan "nulles ut" mot en økning i utbetalingen på et annet fagområde. Arena-ytelsene er satt opp til å motregnes
+mellom alle fagområdene som tilsvarer den samme ytelsen. For f.eks. dagpenger er det altså motregning mellom ny vedtaksløsning og Arena, men det er ingen motregning på tvers av
+ytelsene.
+
+### Regler ved økning og reduksjon av beløp
+I noen tilfeller vil en og samme revurdering øke beløpet i en periode, og redusere beløpet en annen periode. OS har regler for hvordan slike caser skal håndteres avhengig av periodene.
+Reglene er som følger:
+- Reduksjon og økning innenfor samme måned justeres mot hverandre.
+- Reduksjon en måned og økning _påfølgende_ måned justeres mot hverandre.
+- I alle andre tilfeller vil reduksjonen og økningen håndteres hver for seg. Bruker vil både få et kravgrunnlag for reduksjonen og en etterbetaling for økningen.
+
+Disse reglene gjelder på faggruppenivå, altså for både AAP, dagpenger, tiltakspenger og tilleggsstønader.
 
 ## Åpningstid
-Oppdragssystemet (OS) opererer med åpningstider fra 6 om morgenen til 21 om kvelden, mandag til fredag. OS er også stengt på helligdager.
-Om man prøver å bruke simuleringstjenesten når OS er stengt vil man få en 503-respons.
+OS opererer med åpningstider fra 6 om morgenen til 21 om kvelden, mandag til fredag. OS er også stengt på helligdager.
+Om man prøver å bruke simuleringstjenesten når OS er stengt vil man få en 503-respons fra Utsjekk.
 
 [//]: # (## Todos)
 [//]: # (- Er det mulig å simulere ytelse i samme motregningsgruppe opp mot hverandre for å se hva som vil være mest gunstig fordeling for bruker &#40;relevant f.eks dersom skattetrekk på en ytelse og ikke på en annen e.l&#41;)
+
+## Respons fra Utsjekk
+Utsjekk deler opp responsen i to felter: Oppsummering og detaljer. Oppsummeringen består av fire felter: tidligere utbetalt, nytt beløp, etterbetaling og feilutbetaling. Detaljene er en forenklet form av rådataen fra OS, og kan lagres
+som en del av saksgrunnlaget i vedtaksløsningen. Feltene i oppsummeringen er basert på det vi tror er nyttig å vite i en saksbehandlingskontekst. Dersom dere har behov for andre datapunkter, eksempelvis trekk, kan dere ta kontakt
+med oss. Under følger en funksjonell beskrivelse av de ulike feltene i oppsummeringen.
+
+### Tidligere utbetalt
+Dette feltet viser totalbeløpet som er utbetalt til bruker på saken tidligere, for perioden oppsummeringen gjelder for.
+
+### Nytt beløp
+Dette feltet viser det _nye gjeldende totalbeløpet_ som skal utbetales til bruker for perioden. Dette er ikke nødvendigvis det som faktisk blir brutto utbetalt
+– hvis simuleringen gjelder en revurdering, må det nye beløpet ses i sammenheng med det tidligere utbetalte beløpet. Er tidligere utbetalt 800 kr og nytt beløp 1000 kr,
+vil brukeren få utbetalt 200 kr.
+
+### Etterbetaling
+Simuleringen viser en etterbetaling dersom bruker får en økning i utbetalingen for en periode _tilbake i tid_. Det kan gjelde både en helt ny utbetaling og en økning i allerede utbetalt beløp. Dersom perioden oppsummeringen gjelder for er
+frem i tid, vil etterbetalingen alltid være 0. Etterbetalingen kan aldri være negativ – dersom en periode har en reduksjon i tidligere utbetalt beløp, vil etterbetalingen være 0.
+
+Selv om brukeren får en ny utbetaling eller en økning i beløp, er det ikke alltid slik at etterbetalingen er differansen på det nye beløpet og tidligere utbetalt. OS kan i noen tilfeller bruke en økning i en periode for å dekke opp for en reduksjon
+i en annen periode. Dette gjelder dersom økningen og reduksjonen skjer innenfor samme måned, eller når økningen skjer den påfølgende måneden etter reduksjonen.
+
+### Feilutbetaling
+Simuleringen vil ha en positiv feilutbetaling dersom Utsjekk mottar eksplisitte posteringer for feilutbetaling fra OS. Dette feltet er summen av disse posteringene.
+Vedtaksløsningene kan anta at det vil komme et kravgrunnlag for tilbakekreving hvis simuleringen viser en positiv feilutbetaling. Feilutbetalingen vil alltid være ikke-negativ.
 
 ## Eksempler
 
