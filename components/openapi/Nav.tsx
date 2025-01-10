@@ -101,8 +101,10 @@ type Props = {
 }
 
 export const Nav: React.FC<Props> = ({ doc }) => {
-  const sections =
-    useMemo(() => doc.paths && getSections(doc.paths), [doc]) ?? []
+  const sections = useMemo(
+    () => (doc.paths && getSections(doc.paths)) ?? [],
+    [doc],
+  )
 
   const elements = useRef<Record<string, HTMLElement>>({})
   const [sectionElements, setSectionElements] = useState<HTMLElement[]>([])

@@ -1,4 +1,6 @@
-export default {
+const meta = {
   beskrivelse: "Beskrivelse av felter",
-  eksempler: "Eksempeldata"
+  eksempler: "Eksempeldata",
 }
+
+export default meta
