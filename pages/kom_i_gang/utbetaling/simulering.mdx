@@ -5,7 +5,7 @@ title: Simulering
 # Simulering
 
 ## Hva er simulering
-Simulering er en "dry run" mot Oppdragssytemet (OS) og viser hvordan resultatet av en iverksetting ville blitt.
+Simulering er en "dry run" mot Oppdragssystemet (OS) og viser hvordan resultatet av en iverksetting ville blitt.
 Simuleringen kan fortelle om iverksettingen vil være en ny utbetaling, en feilutbetaling eller en etterbetaling. I tillegg vil man få informasjon om
 iverksatte utbetalinger fra andre fagområder innenfor samme gruppe (Se [avsnitt om oppsett](#regler-for-arena-ytelsene)) – for Arena-ytelsene vil man
 eksempelvis kunne se om brukeren har utbetalinger i samme tidsrom fra Arena. Man vil også få informasjon om ulike typer trekk for utbetalingen,
@@ -26,7 +26,7 @@ OS er strukturert med _fagområder_ og _faggrupper_. Et fagområde tilsvarer en 
 Fagområder som logisk eller faglig sett hører sammen grupperes i samme _faggruppe_. I OS er AAP, dagpenger, tiltakspenger og tilleggsstønader gruppert sammen i
 faggruppen som heter ARBYT (for _arbeidsytelser_). Det er en del regler og konfigurasjon i OS som settes på faggruppe-nivå.
 
-I tillegg har OS et konsept som heter _motregningsgruppe_. En motregningsgruppe er et subset av fagområder i en faggruppe som kan motregnes mot hverandre.
+I tillegg har OS et konsept som heter _motregningsgruppe_. En motregningsgruppe er et subsett av fagområder i en faggruppe som kan motregnes mot hverandre.
 Det betyr at en reduksjon i utbetalingen på et fagområde kan "nulles ut" mot en økning i utbetalingen på et annet fagområde. Arena-ytelsene er satt opp til å motregnes
 mellom alle fagområdene som tilsvarer den samme ytelsen. For f.eks. dagpenger er det altså motregning mellom ny vedtaksløsning og Arena, men det er ingen motregning på tvers av
 ytelsene.
@@ -73,7 +73,8 @@ Vedtaksløsningene kan anta at det vil komme et kravgrunnlag for tilbakekreving 
 
 ## Eksempler
 
-Tabellen under viser tre behandlinger for perioden februar t.o.m. april
+### Feilutbetaling og etterbetaling
+Tabellen under viser tre behandlinger for perioden februar t.o.m. april:
 
 | Behandlinger | Februar | Mars | April |
 |:-------------|:-------:|:----:|------:|
@@ -81,29 +82,79 @@ Tabellen under viser tre behandlinger for perioden februar t.o.m. april
 | 22/5         |         | 800  |       |
 | 23/5         |  1100   | 1100 |  1100 |
 
+#### Førstegangsbehandling
 Første behandling sendes inn 18/5 og er på 1000 kr pr måned. Oppsummeringen fra simuleringstjenesten blir seendes slik ut:
 
 | Oppsummering        | Februar | Mars | April |
 |:--------------------|:-------:|:----:|------:|
 | tidligereUtbetalt   |    0    |  0   |     0 |
-| nyUtbetaling        |  1000   | 1000 |  1000 |
-| totalEtterbetaling  |    0    |  0   |     0 |
+| nyttBeløp           |  1000   | 1000 |  1000 |
+| totalEtterbetaling  |  1000   | 1000 |  1000 |
 | totalFeilutbetaling |    0    |  0   |     0 |
 
-Andre behandling sendes inn 22/5. Der revurderer man mars og sier at bruker skal få utbetalt 800 kr, ikke 1000 kr som det opprinnelig var:
+Merk at alle periodene regnes som etterbetalinger fordi de er tilbake i tid i forhold til når simuleringen gjøres (18. mai).
 
-| Oppsummering        | Februar | Mars | April |
-|:--------------------|:-------:|:----:|------:|
-| tidligereUtbetalt   |  1000   | 1000 |  1000 |
-| nyUtbetaling        |    0    | 800  |     0 |
-| totalEtterbetaling  |    0    |  0   |     0 |
-| totalFeilutbetaling |    0    | 200  |     0 |
+#### Revurdering nr. 1 – reduksjon
+Andre behandling sendes inn 22/5. Der revurderer man mars og sier at bruker skal få utbetalt 800 kr, ikke 1000 kr som opprinnelig utbetalt. Oppsummeringen vil se slik ut:
 
-Andre behandling sendes inn 23/5. Der revurderer man alle periodene til 1100 kr pr. måned:
+| Oppsummering        | Mars | April |
+|:--------------------|:----:|------:|
+| tidligereUtbetalt   | 1000 |  1000 |
+| nyttBeløp           | 800  |  1000 |
+| totalEtterbetaling  |  0   |     0 |
+| totalFeilutbetaling | 200  |     0 |
+
+Merk at februar ikke blir med i responsen her. Det er fordi februar er tidligere enn endringen i revurderingen.
+April blir med selv om det ikke er noen endring i den perioden fordi april kommer etter endringen i revurderingen.
+
+#### Revurdering nr. 2 – økning
+Tredje behandling sendes inn 23/5. Der revurderer man alle periodene til 1100 kr pr. måned:
 
 | Oppsummering        | Februar | Mars | April |
 |:--------------------|:-------:|:----:|------:|
 | tidligereUtbetalt   |  1000   | 800  |  1000 |
-| nyUtbetaling        |  1100   | 1100 |  1100 |
+| nyttBeløp           |  1100   | 1100 |  1100 |
 | totalEtterbetaling  |   100   | 300  |   100 |
 | totalFeilutbetaling |    0    |  0   |     0 |
+
+### Reduksjon og økning påfølgende måned i samme behandling
+Tabellen under viser to behandlinger for perioden februar t.o.m. april. Førstegangsbehandlingen i dette eksempelet er identisk med eksempelet over.
+
+| Behandlinger | Februar | Mars | April |
+|:-------------|:-------:|:----:|------:|
+| 18/5         |  1000   | 1000 |  1000 |
+| 22/5         |         | 500  |  2000 |
+
+### Oppsummering for revurdering
+I revurderingen 22/5 reduseres beløpet for mars med 500 kr og beløpet for april økes med 1000 kr. Siden økningen kommer måneden etter
+reduksjonen, vil de justeres mot hverandre. Oppsummeringen vil se slik ut:
+
+| Oppsummering        | Mars | April |
+|:--------------------|:----:|------:|
+| tidligereUtbetalt   | 1000 |  1000 |
+| nyttBeløp           | 500  |  2000 |
+| totalEtterbetaling  |  0   |   500 |
+| totalFeilutbetaling |  0   |     0 |
+
+Her ser man at selv om økningen for april er 1000 kr, vil etterbetalingen bli kun 500 kr fordi 500 kr brukes for å nulle ut reduksjonen i mars.
+Derfor er det heller ingen feilutbetaling for mars.
+
+### Reduksjon og økning foregående måned i samme behandling
+La oss ta motsatt eksempel av det over: Tabellen under viser to behandlinger for perioden februar t.o.m. april. I stedet for å øke beløpet i april, økes beløpet
+i februar i revurderingen.
+
+| Behandlinger | Februar | Mars | April |
+|:-------------|:-------:|:----:|------:|
+| 18/5         |  1000   | 1000 |  1000 |
+| 22/5         |  2000   | 500  |       |
+
+### Oppsummering for revurdering
+I revurderingen 22/5 økes beløpet for februar med 1000 kr og beløpet for mars reduseres med 500 kr. Siden økningen kommer måneden før
+reduksjonen, vil de _ikke_ justeres mot hverandre, men føre til ordinær etterbetaling og feilutbetaling. Oppsummeringen vil se slik ut:
+
+| Oppsummering        | Februar | Mars | April |
+|:--------------------|:-------:|:----:|------:|
+| tidligereUtbetalt   |  1000   | 1000 |  1000 |
+| nyttBeløp           |  2000   | 500  |  1000 |
+| totalEtterbetaling  |  1000   |  0   |     0 |
+| totalFeilutbetaling |    0    | 500  |     0 |
