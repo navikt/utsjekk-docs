@@ -17,7 +17,7 @@ export const OpenApiSpecContext = createContext<OpenApiSpecContext>({
   docs: [],
 } as unknown as OpenApiSpecContext)
 
-const docs = [validateSchema(oldSpec), validateSchema(newSpec)]
+const docs = [validateSchema(newSpec), validateSchema(oldSpec)]
 
 const getDoc = (title: string): OpenApiDoc => {
   return docs.find((it) => it.info.title === title)!
@@ -30,7 +30,7 @@ type Props = {
 
 export const OpenApiSpecProvider: React.FC<Props> = ({
   children,
-  defaultDoc = "Utsjekk API (wip)",
+  defaultDoc = "Utbetalinger",
 }) => {
   const [doc, setDoc] = useState<OpenApiDoc>(getDoc(defaultDoc))
 

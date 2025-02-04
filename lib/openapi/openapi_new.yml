@@ -1,7 +1,7 @@
 openapi: 3.1.1
 info:
   version: "2"
-  title: Utsjekk API (wip)
+  title: Utbetalinger
   description: API for iverksetting av utbetalinger mot Oppdragssystemet
 servers:
   - url: https://utsjekk.intern.nav.no
@@ -16,7 +16,8 @@ paths:
       tags:
         - Utbetaling
       summary: Send utbetaling
-      description: Iverksetter utbetalingen mot Oppdragssystemet.
+      description:
+        Oppretter en utbetaling hos oss som vi effektuerer i Oppdragssystemet.
       operationId: iverksett_utbetaling
       parameters:
         - name: uid
@@ -48,11 +49,16 @@ paths:
           description: Ikke autorisert til å iverksette utbetaling
         "409":
           description: Utbetalingen er i konflikt med tidligere utbetaling
+
     put:
       tags:
         - Utbetaling
       summary: Endre utbetaling
-      description: Endrer en eksisterende utbetaling.
+      description:
+        Endrer en eksisterende utbetaling. Brukes typisk om man skal foreta en revurdering/korrigering av en
+        tidligere utbetalt periode. De nye periodene man sender inn må ha samme periodetype som de gamle. Hvis man 
+        f.eks. tidligere har sendt inn perioder med periodetype 'MND' kan man ikke her sende inn nye perioder med
+        periodetype 'DAG'. Om man av en eller annen grunn trenger å endre periodetype må man annullere utbetalingen.
       operationId: endre_utbetaling
       parameters:
         - name: uid
@@ -80,11 +86,12 @@ paths:
           description: Utbetalingen finnes ikke
         "409":
           description: Utbetalingen er i konflikt med tidligere utbetaling
+
     get:
       tags:
         - Utbetaling
       summary: Hent utbetaling
-      description: Henter utbetalingen slik den ser ut i Utsjekk.
+      description: Henter utbetalingen slik den ser ut hos oss.
       operationId: hent_utbetaling
       parameters:
         - name: uid
@@ -106,11 +113,16 @@ paths:
           description: Ugyldig format på uid-parameter
         "404":
           description: Fant ikke utbetalingen
+
     delete:
       tags:
         - Utbetaling
       summary: Annullér utbetaling
-      description: Annullerer en utbetaling mot Oppdragssystemet.
+      description:
+        Sletter utbetalingen hos oss og annullerer utbetalingen i Oppdragssystemet. Dette vil typisk opprette en 
+        tilbakekrevingssak.
+        For å unngå at man sletter feil utbetaling ved et uhell (f.eks. hvis man har feil/utdatert utbetaling), må man
+        sende inn hele utbetalingen man ønsker å slette som vi da validerer mot det vi har lagret hos oss.
       operationId: annuller_utbetaling
       parameters:
         - name: uid
@@ -121,6 +133,12 @@ paths:
             format: uuid
           description: ID til utbetalingen. Sendes ikke til OS/UR.
           example: "7832faed-2140-4884-9e5c-5ab434e57fbb"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UtbetalingApi"
+        required: true
       responses:
         "204":
           description: Annullerte utbetalingen
@@ -163,28 +181,22 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                  - status
-                type: object
-                properties:
-                  status:
-                    type: string
-                    enum:
-                      - SENDT_TIL_OPPDRAG
-                      - FEILET_MOT_OPPDRAG
-                      - OK
-                      - IKKE_PÅBEGYNT
-                      - OK_UTEN_UTBETALING
+                type: string
+                enum:
+                  - SENDT_TIL_OPPDRAG
+                  - FEILET_MOT_OPPDRAG
+                  - OK
+                  - IKKE_PÅBEGYNT
+                  - OK_UTEN_UTBETALING
               examples:
                 "200":
-                  value:
-                    status: SENDT_TIL_OPPDRAG
+                  value: SENDT_TIL_OPPDRAG
         "400":
           description: Ugyldig format på uid-parameter
         "404":
           description: Fant ikke utbetalingen
 
-  "/simuleringer/{uid}":
+  "/utbetalinger/{uid}/simuler":
     post:
       tags:
         - Simulering
@@ -231,6 +243,7 @@ components:
         - stønad
         - beslutterId
         - saksbehandlerId
+        - periodeType
         - perioder
       properties:
         sakId:
@@ -308,6 +321,8 @@ components:
             - LÆREMIDLER_ENSLIG_FORSØRGER_BARNETILLEGG
             - LÆREMIDLER_AAP_BARNETILLEGG
             - LÆREMIDLER_ETTERLATTE_BARNETILLEGG
+            # AAP
+            - AAP_UNDER_ARBEIDSAVKLARING
         beslutterId:
           type: string
           description:
@@ -322,6 +337,17 @@ components:
             system/applikasjon/servicebruker dersom behandlingen er gjort automatisk. Utsjekk gjør ingen validering av
             dette feltet.
           example: "A234567"
+        periodeType:
+          type: string
+          description:
+            Type periode periodene skal tolkes som. F.eks. 'UKEDAG' er vanlige ukedager (man-fre) mens 
+            'DAG' er alle dager (man-søn). 'MDN' er hele måneder og 'EN_GANG' er engangsbeløp som utbetales med en gang.
+          example: "UKEDAG"
+          enum:
+            - UKEDAG
+            - DAG
+            - MND
+            - EN_GANG
         perioder:
           type: array
           items:
@@ -336,9 +362,18 @@ components:
             stønad: "ARBEIDSTRENING"
             beslutterId: "Z123456"
             saksbehandlerId: "A234567"
+            periodeType: "DAG"
             perioder:
-              - fom: "2024-10-01"
-                tom: "2024-10-31"
+              - fom: "2024-10-04"
+                tom: "2024-10-04"
+                beløp: 1024
+                betalendeEnhet: "1234"
+              - fom: "2024-10-05"
+                tom: "2024-10-05"
+                beløp: 1024
+                betalendeEnhet: "1234"
+              - fom: "2024-10-06"
+                tom: "2024-10-06"
                 beløp: 1024
                 betalendeEnhet: "1234"
         Tilleggsstønader:
@@ -350,9 +385,30 @@ components:
             stønad: "TILSYN_BARN_ENSLIG_FORSØRGER"
             beslutterId: "Z123456"
             saksbehandlerId: "A234567"
+            periodeType: "UKEDAG"
             perioder:
               - fom: "2024-10-01"
                 tom: "2024-10-01"
+                beløp: 256
+              - fom: "2024-10-02"
+                tom: "2024-10-02"
+                beløp: 256
+        AAP:
+          value:
+            sakId: "ASD123NLDQ23"
+            behandlingId: "ADNLK123lDLJNWQ1"
+            personident: "15507600333"
+            vedtakstidspunkt: "2024-11-26T09:34:10.912Z"
+            stønad: "AAP_UNDER_ARBEIDSAVKLARING"
+            beslutterId: "Z123456"
+            saksbehandlerId: "A234567"
+            periodeType: "UKEDAG"
+            perioder:
+              - fom: "2024-10-01"
+                tom: "2024-10-01"
+                beløp: 256
+              - fom: "2024-10-02"
+                tom: "2024-10-02"
                 beløp: 256
 
     UtbetalingsperiodeApi:
@@ -382,10 +438,10 @@ components:
           pattern: '\d{4}'
           description: Brukes hvis budsjettet til et lokalkontor skal brukes i beregningene.
           example: "1234"
-        fastsattDagpengesats:
+        fastsattDagsats:
           type: integer
           minimum: 0
-          description: Brukes for skatteberegning av dagpenger.
+          description: Brukes for skatteberegning av dagpenger og AAP.
           example: 200
 
     SimuleringApi:
@@ -396,6 +452,7 @@ components:
         - personident
         - stønad
         - saksbehandlerId
+        - periodeType
         - perioder
       properties:
         sakId:
@@ -468,6 +525,8 @@ components:
             - LÆREMIDLER_ENSLIG_FORSØRGER_BARNETILLEGG
             - LÆREMIDLER_AAP_BARNETILLEGG
             - LÆREMIDLER_ETTERLATTE_BARNETILLEGG
+            # AAP
+            - AAP_UNDER_ARBEIDSAVKLARING
         saksbehandlerId:
           type: string
           description:
@@ -475,6 +534,17 @@ components:
             system/applikasjon/servicebruker dersom behandlingen er gjort automatisk. Utsjekk gjør ingen validering av
             dette feltet.
           example: "A234567"
+        periodeType:
+          type: string
+          description:
+            Type periode periodene skal tolkes som. F.eks. 'UKEDAG' er vanlige ukedager (man-fre) mens
+            'DAG' er alle dager (man-søn). 'MDN' er hele måneder og 'EN_GANG' er engangsbeløp som utbetales med en gang.
+          example: "UKEDAG"
+          enum:
+            - UKEDAG
+            - DAG
+            - MND
+            - EN_GANG
         perioder:
           type: array
           items:
@@ -485,11 +555,22 @@ components:
             sakId: "ASD123NLDQ23"
             behandlingId: "ADNLK123lDLJNWQ1"
             personident: "15507600333"
+            vedtakstidspunkt: "2024-11-26T09:34:10.912Z"
             stønad: "ARBEIDSTRENING"
+            beslutterId: "Z123456"
             saksbehandlerId: "A234567"
+            periodeType: "DAG"
             perioder:
-              - fom: "2024-10-01"
-                tom: "2024-10-31"
+              - fom: "2024-10-04"
+                tom: "2024-10-04"
+                beløp: 1024
+                betalendeEnhet: "1234"
+              - fom: "2024-10-05"
+                tom: "2024-10-05"
+                beløp: 1024
+                betalendeEnhet: "1234"
+              - fom: "2024-10-06"
+                tom: "2024-10-06"
                 beløp: 1024
                 betalendeEnhet: "1234"
         Tilleggsstønader:
@@ -497,11 +578,34 @@ components:
             sakId: "ASD123NLDQ23"
             behandlingId: "ADNLK123lDLJNWQ1"
             personident: "15507600333"
+            vedtakstidspunkt: "2024-11-26T09:34:10.912Z"
             stønad: "TILSYN_BARN_ENSLIG_FORSØRGER"
+            beslutterId: "Z123456"
             saksbehandlerId: "A234567"
+            periodeType: "UKEDAG"
             perioder:
               - fom: "2024-10-01"
                 tom: "2024-10-01"
+                beløp: 256
+              - fom: "2024-10-02"
+                tom: "2024-10-02"
+                beløp: 256
+        AAP:
+          value:
+            sakId: "ASD123NLDQ23"
+            behandlingId: "ADNLK123lDLJNWQ1"
+            personident: "15507600333"
+            vedtakstidspunkt: "2024-11-26T09:34:10.912Z"
+            stønad: "AAP_UNDER_ARBEIDSAVKLARING"
+            beslutterId: "Z123456"
+            saksbehandlerId: "A234567"
+            periodeType: "UKEDAG"
+            perioder:
+              - fom: "2024-10-01"
+                tom: "2024-10-01"
+                beløp: 256
+              - fom: "2024-10-02"
+                tom: "2024-10-02"
                 beløp: 256
 
     SimuleringApiRespons:
