@@ -12,7 +12,7 @@ type Props = {
 export const EnumView: React.FC<Props> = ({ values, defaultVisible = 3 }) => {
   const [visibleItems, setVisibleItems] = useState(defaultVisible)
 
-  const showable = values.slice(0, visibleItems)
+  const showable = values.slice(0, visibleItems + 1)
 
   const toggleVisibleItems = () => {
     setVisibleItems((prev) =>
@@ -24,7 +24,7 @@ export const EnumView: React.FC<Props> = ({ values, defaultVisible = 3 }) => {
     <>
       <BodyShort>En av:</BodyShort>
       <ul className={styles.enumList}>
-        {defaultVisible !== values.length && (
+        {defaultVisible + 1 < values.length && (
           <button className={styles.expandButton} onClick={toggleVisibleItems}>
             {visibleItems === defaultVisible ? (
               <>
@@ -42,7 +42,7 @@ export const EnumView: React.FC<Props> = ({ values, defaultVisible = 3 }) => {
             <pre className={styles.pre}>{it}</pre>
           </li>
         ))}
-        {defaultVisible !== values.length &&
+        {defaultVisible + 1 < values.length &&
           visibleItems === defaultVisible &&
           "..."}
       </ul>
