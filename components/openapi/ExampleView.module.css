@@ -1,9 +1,0 @@
-.example {
-  background-color: var(--example-background);
-  border: var(--a-border-default);
-  padding: var(--a-spacing-1);
-}
-
-.container {
-  font-size: var(--a-font-size-small);
-}

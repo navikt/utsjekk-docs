@@ -1,4 +1,0 @@
-.required {
-  font-size: var(--a-font-size-small);
-  color: light-dark(var(--a-text-danger), red);
-}
